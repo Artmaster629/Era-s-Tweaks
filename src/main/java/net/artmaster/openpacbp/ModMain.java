@@ -28,6 +28,7 @@ public class ModMain {
 
     }
 
+
     private void commonSetup(FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("Готов служить Мастерии!");
