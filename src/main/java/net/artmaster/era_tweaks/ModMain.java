@@ -1,4 +1,4 @@
-package net.artmaster.openpacbp;
+package net.artmaster.era_tweaks;
 
 
 import com.mojang.logging.LogUtils;
@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 @Mod(ModMain.MODID)
 public class ModMain {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "openpacbp";
+    public static final String MODID = "era_tweaks";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 

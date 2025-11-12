@@ -1,10 +1,10 @@
-package net.artmaster.openpacbp.client;
+package net.artmaster.era_tweaks.client;
 
-import net.artmaster.openpacbp.api.gui.ColorButton;
-import net.artmaster.openpacbp.api.gui.GuiGroup;
-import net.artmaster.openpacbp.network.Network;
-import net.artmaster.openpacbp.network.parties.SyncAllyPartiesPacket;
-import net.artmaster.openpacbp.utils.TooltipUtil;
+import net.artmaster.era_tweaks.api.gui.ColorButton;
+import net.artmaster.era_tweaks.api.gui.GuiGroup;
+import net.artmaster.era_tweaks.network.Network;
+import net.artmaster.era_tweaks.network.parties.SyncAllyPartiesPacket;
+import net.artmaster.era_tweaks.utils.TooltipUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -30,16 +30,16 @@ public class PartyManageScreen extends Screen {
 
 
 
-    ResourceLocation redButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/red_button.png");
-    ResourceLocation orangeButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/orange_button.png");
-    ResourceLocation yellowButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/yellow_button.png");
-    ResourceLocation greenButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/green_button.png");
-    ResourceLocation lightBlueButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/light_blue_button.png");
-    ResourceLocation blueButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/blue_button.png");
-    ResourceLocation purpleButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/purple_button.png");
-    ResourceLocation darkGrayButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/dark_gray_button.png");
-    ResourceLocation grayButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/gray_button.png");
-    ResourceLocation blackButtonTexture = ResourceLocation.fromNamespaceAndPath("openpacbp", "textures/buttons/black_button.png");
+    ResourceLocation redButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/red_button.png");
+    ResourceLocation orangeButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/orange_button.png");
+    ResourceLocation yellowButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/yellow_button.png");
+    ResourceLocation greenButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/green_button.png");
+    ResourceLocation lightBlueButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/light_blue_button.png");
+    ResourceLocation blueButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/blue_button.png");
+    ResourceLocation purpleButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/purple_button.png");
+    ResourceLocation darkGrayButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/dark_gray_button.png");
+    ResourceLocation grayButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/gray_button.png");
+    ResourceLocation blackButtonTexture = ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/buttons/black_button.png");
 
 
 
@@ -86,7 +86,7 @@ public class PartyManageScreen extends Screen {
     private EditBox managePlayerBox;
     private EditBox manageAlliesBox;
     public PartyManageScreen() {
-        super(Component.translatable("gui.openpacbp.party_manage_screen"));
+        super(Component.translatable("gui.era_tweaks.party_manage_screen"));
     }
 
     public boolean isPauseScreen() {
@@ -106,7 +106,7 @@ public class PartyManageScreen extends Screen {
                 60,
                 200,
                 20,
-                Component.translatable("gui.openpacbp.party_manage_name_textbox")
+                Component.translatable("gui.era_tweaks.party_manage_name_textbox")
         );
         this.colorBox = new EditBox(
                 this.font,
@@ -114,7 +114,7 @@ public class PartyManageScreen extends Screen {
                 100,
                 200,
                 20,
-                Component.translatable("gui.openpacbp.party_manage_color_textbox")
+                Component.translatable("gui.era_tweaks.party_manage_color_textbox")
         );
         this.manageAlliesBox = new EditBox(
                 this.font,
@@ -122,7 +122,7 @@ public class PartyManageScreen extends Screen {
                 160,
                 200,
                 20,
-                Component.translatable("gui.openpacbp.party_manage_allies_textbox")
+                Component.translatable("gui.era_tweaks.party_manage_allies_textbox")
         );
 
         this.managePlayerBox = new EditBox(
@@ -131,13 +131,13 @@ public class PartyManageScreen extends Screen {
                 220,
                 200,
                 20,
-                Component.translatable("gui.openpacbp.party_manage_player_textbox")
+                Component.translatable("gui.era_tweaks.party_manage_player_textbox")
         );
 
 
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_ally_add_button_text"),
+                                Component.translatable("gui.era_tweaks.party_manage_ally_add_button_text"),
                                 (btn) -> onAllyAddButtonClick()
                         ).bounds(
                                 this.textBox.getX(),
@@ -148,7 +148,7 @@ public class PartyManageScreen extends Screen {
         );
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_ally_remove_button_text"),
+                                Component.translatable("gui.era_tweaks.party_manage_ally_remove_button_text"),
                                 (btn) -> onAllyRemButtonClick()
                         ).bounds(
                                 this.textBox.getX()+100,
@@ -161,7 +161,7 @@ public class PartyManageScreen extends Screen {
 
         this.addRenderableWidget(
                 Button.builder(
-                        Component.translatable("gui.openpacbp.party_manage_save_button_text"),
+                        Component.translatable("gui.era_tweaks.party_manage_save_button_text"),
                         (btn) -> onButtonClick()
                         ).bounds(
                         this.textBox.getX()+100,
@@ -172,7 +172,7 @@ public class PartyManageScreen extends Screen {
         );
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_close_button_text"),
+                                Component.translatable("gui.era_tweaks.party_manage_close_button_text"),
                                 (btn) -> onExitButtonClick()
                         ).bounds(
                                 this.textBox.getX(),
@@ -184,7 +184,7 @@ public class PartyManageScreen extends Screen {
 
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_invite_button_text"),
+                                Component.translatable("gui.era_tweaks.party_manage_invite_button_text"),
                                 (btn) -> onInviteButtonClick()
                         ).bounds(
                                 this.managePlayerBox.getX(),
@@ -195,7 +195,7 @@ public class PartyManageScreen extends Screen {
         );
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_kick_button_text"),
+                                Component.translatable("gui.era_tweaks.party_manage_kick_button_text"),
                                 (btn) -> onKickButtonClick()
                         ).bounds(
                                 this.managePlayerBox.getX()+75,
@@ -206,7 +206,7 @@ public class PartyManageScreen extends Screen {
         );
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_button_rank_member"),
+                                Component.translatable("gui.era_tweaks.party_manage_button_rank_member"),
                                 (btn) -> onRankMemberButtonClick()
                         ).bounds(
                                 this.managePlayerBox.getX()+140,
@@ -217,7 +217,7 @@ public class PartyManageScreen extends Screen {
         );
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_button_rank_moderator"),
+                                Component.translatable("gui.era_tweaks.party_manage_button_rank_moderator"),
                                 (btn) -> onRankModeratorButtonClick()
                         ).bounds(
                                 this.managePlayerBox.getX()+160,
@@ -228,7 +228,7 @@ public class PartyManageScreen extends Screen {
         );
         this.addRenderableWidget(
                 Button.builder(
-                                Component.translatable("gui.openpacbp.party_manage_button_rank_admin"),
+                                Component.translatable("gui.era_tweaks.party_manage_button_rank_admin"),
                                 (btn) -> onRankAdminButtonClick()
                         ).bounds(
                                 this.managePlayerBox.getX()+180,
@@ -341,76 +341,76 @@ public class PartyManageScreen extends Screen {
 
 
         if (mouseX > this.managePlayerBox.getX()+180 && mouseX < this.managePlayerBox.getX()+200 && mouseY > this.managePlayerBox.getY()+20 && mouseY < this.managePlayerBox.getY()+40) {
-            guiGraphics.renderTooltip(font, Component.translatable("tooltip.openpacbp.admin_rank_button_desc"), mouseX, mouseY);
+            guiGraphics.renderTooltip(font, Component.translatable("tooltip.era_tweaks.admin_rank_button_desc"), mouseX, mouseY);
         }
         if (mouseX > this.managePlayerBox.getX()+160 && mouseX < this.managePlayerBox.getX()+180 && mouseY > this.managePlayerBox.getY()+20 && mouseY < this.managePlayerBox.getY()+40) {
-            guiGraphics.renderTooltip(font, Component.translatable("tooltip.openpacbp.moderator_rank_button_desc"), mouseX, mouseY);
+            guiGraphics.renderTooltip(font, Component.translatable("tooltip.era_tweaks.moderator_rank_button_desc"), mouseX, mouseY);
         }
         if (mouseX > this.managePlayerBox.getX()+140 && mouseX < this.managePlayerBox.getX()+160 && mouseY > this.managePlayerBox.getY()+20 && mouseY < this.managePlayerBox.getY()+40) {
-            guiGraphics.renderTooltip(font, Component.translatable("tooltip.openpacbp.member_rank_button_desc"), mouseX, mouseY);
+            guiGraphics.renderTooltip(font, Component.translatable("tooltip.era_tweaks.member_rank_button_desc"), mouseX, mouseY);
         }
         if (mouseX > this.managePlayerBox.getX() && mouseX < this.managePlayerBox.getX()+200 && mouseY > this.managePlayerBox.getY() && mouseY < this.managePlayerBox.getY()+20) {
-            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.openpacbp.manage_player_box_desc"), mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.era_tweaks.manage_player_box_desc"), mouseX, mouseY);
         }
         if (mouseX > this.colorBox.getX() && mouseX < this.colorBox.getX()+200 && mouseY > this.colorBox.getY() && mouseY < this.colorBox.getY()+20) {
-            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.openpacbp.color_box_desc"), mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.era_tweaks.color_box_desc"), mouseX, mouseY);
         }
         if (mouseX > this.textBox.getX() && mouseX < this.textBox.getX()+200 && mouseY > this.textBox.getY() && mouseY < this.textBox.getY()+20) {
-            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.openpacbp.text_box_desc"), mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.era_tweaks.text_box_desc"), mouseX, mouseY);
         }
         if (mouseX > this.textBox.getX() && mouseX < this.textBox.getX()+100 && mouseY > this.managePlayerBox.getY()+45 && mouseY < this.managePlayerBox.getY()+65) {
-            guiGraphics.renderTooltip(font, Component.translatable("tooltip.openpacbp.leave_button_desc"), mouseX, mouseY);
+            guiGraphics.renderTooltip(font, Component.translatable("tooltip.era_tweaks.leave_button_desc"), mouseX, mouseY);
         }
         if (mouseX > this.textBox.getX()+100 && mouseX < this.textBox.getX()+200 && mouseY > this.managePlayerBox.getY()+45 && mouseY < this.managePlayerBox.getY()+65) {
-            guiGraphics.renderTooltip(font, Component.translatable("tooltip.openpacbp.save_button_desc"), mouseX, mouseY);
+            guiGraphics.renderTooltip(font, Component.translatable("tooltip.era_tweaks.save_button_desc"), mouseX, mouseY);
         }
         if (mouseX > this.manageAlliesBox.getX() && mouseX < this.manageAlliesBox.getX()+200 && mouseY > this.manageAlliesBox.getY() && mouseY < this.manageAlliesBox.getY()+20) {
-            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.openpacbp.manage_allies_box_desc"), mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(font, TooltipUtil.splitTooltip("tooltip.era_tweaks.manage_allies_box_desc"), mouseX, mouseY);
         }
 
 
 
 
         Component limit = Component.translatable(
-                "gui.openpacbp.party_manage_chunks_text",
+                "gui.era_tweaks.party_manage_chunks_text",
                 claims, claimsManager.getClaimLimit()
         );
 
         Component partyName = Component.translatable(
-                "gui.openpacbp.party_manage_party_name_text",
+                "gui.era_tweaks.party_manage_party_name_text",
                 partyManager.getPartyName()
         );
 
         Component partyOwner = Component.translatable(
-                "gui.openpacbp.party_manage_party_owner_text",
+                "gui.era_tweaks.party_manage_party_owner_text",
                 partyManager.getParty().getOwner().getUsername()
         );
 
 //        Component partyMembersCount = Component.translatable(
-//                "gui.openpacbp.party_manage_member_count_text",
+//                "gui.era_tweaks.party_manage_member_count_text",
 //                partyManager.getUIMemberCount(),
 //                partyManager.getMemberLimit()
 //        );
 //
 //        Component partyAlliesCount = Component.translatable(
-//                "gui.openpacbp.party_manage_allies_count_text",
+//                "gui.era_tweaks.party_manage_allies_count_text",
 //                partyManager.getUIAllyCount(),
 //                partyManager.getAllyLimit()
 //        );
 //
 //        Component partyInvitesCount = Component.translatable(
-//                "gui.openpacbp.party_manage_invites_count_text",
+//                "gui.era_tweaks.party_manage_invites_count_text",
 //                partyManager.getUIInviteCount(),
 //                partyManager.getInviteLimit()
 //        );
 
         Component partyColor = Component.translatable(
-                "gui.openpacbp.party_manage_party_color_text",
+                "gui.era_tweaks.party_manage_party_color_text",
                 String.valueOf(TextColor.fromRgb(claimsManager.getPlayerInfo(this.minecraft.player.getUUID()).getClaimsColor()))
         );
 
 
-        Component partyManageTitleText = Component.translatable("gui.openpacbp.party_manage_screen_title");
+        Component partyManageTitleText = Component.translatable("gui.era_tweaks.party_manage_screen_title");
 
         float bigScale = 2.0f; // 2x больше обычного
         guiGraphics.pose().pushPose();
@@ -427,11 +427,11 @@ public class PartyManageScreen extends Screen {
 
 
 
-        guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_name_text_string"), 0, this.textBox.getY()-10, 0xFFFFFF);
-        guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_color_text_string"), 0, this.colorBox.getY()-10, 0xFFFFFF);
-        guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_allies_actions_text_string"), 0, this.manageAlliesBox.getY()-10, 0xFFFFFF);
+        guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_name_text_string"), 0, this.textBox.getY()-10, 0xFFFFFF);
+        guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_color_text_string"), 0, this.colorBox.getY()-10, 0xFFFFFF);
+        guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_allies_actions_text_string"), 0, this.manageAlliesBox.getY()-10, 0xFFFFFF);
 
-        guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_player_actions_text_string"), 0, this.managePlayerBox.getY()-10, 0xFFFFFF);
+        guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_player_actions_text_string"), 0, this.managePlayerBox.getY()-10, 0xFFFFFF);
 
 
 
@@ -455,21 +455,21 @@ public class PartyManageScreen extends Screen {
 
 // Создаём блоки
         GuiGroup invitesGroup = new GuiGroup(
-                "gui.openpacbp.party_manage_invites_title",
+                "gui.era_tweaks.party_manage_invites_title",
                 partyManager.getParty().getInviteCount(),
                 partyManager.getInviteLimit(),
                 partyManager.getParty().getInvitedPlayersStream().map(IPartyPlayerInfoAPI::getUsername).toList()
         );
 
         GuiGroup alliesGroup = new GuiGroup(
-                "gui.openpacbp.party_manage_allies_title",
+                "gui.era_tweaks.party_manage_allies_title",
                 partyManager.getUIAllyCount(),
                 partyManager.getAllyLimit(),
                 new ArrayList<>(allyNames.values())
         );
 
         GuiGroup membersGroup = new GuiGroup(
-                "gui.openpacbp.party_manage_members_title",
+                "gui.era_tweaks.party_manage_members_title",
                 partyManager.getUIMemberCount(),
                 partyManager.getMemberLimit(),
                 members.stream().map(Object::toString).toList()
@@ -487,7 +487,7 @@ public class PartyManageScreen extends Screen {
 //                .map(IPartyPlayerInfoAPI::getUsername)
 //                .toList();
 //        if (!invites.isEmpty()) {
-//            guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_invites_title"), baseX, currentY, 0xFFFFFF);
+//            guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_invites_title"), baseX, currentY, 0xFFFFFF);
 //            currentY += this.font.lineHeight + 2;
 //            for (String invite : invites) {
 //                guiGraphics.drawString(this.font, Component.literal(invite), baseX, currentY, 0xFFFFFF);
@@ -501,7 +501,7 @@ public class PartyManageScreen extends Screen {
 //        currentY += this.font.lineHeight + 2;
 //
 //        if (!allyNames.isEmpty()) {
-//            guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_allies_title"), baseX, currentY, 0xFFFFFF);
+//            guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_allies_title"), baseX, currentY, 0xFFFFFF);
 //            currentY += this.font.lineHeight + 2;
 //            for (String ownerName : allyNames.values()) {
 //                guiGraphics.drawString(this.font, Component.literal(ownerName), baseX, currentY, 0xFFFFFF);
@@ -515,7 +515,7 @@ public class PartyManageScreen extends Screen {
 //        currentY += this.font.lineHeight + 2;
 //
 //        if (!members.isEmpty()) {
-//            guiGraphics.drawString(this.font, Component.translatable("gui.openpacbp.party_manage_members_title"), baseX, currentY, 0xFFFFFF);
+//            guiGraphics.drawString(this.font, Component.translatable("gui.era_tweaks.party_manage_members_title"), baseX, currentY, 0xFFFFFF);
 //            currentY += this.font.lineHeight + 2;
 //            for (Object member : members) {
 //                guiGraphics.drawString(this.font, Component.literal(member.toString()), baseX, currentY, 0xFFFFFF);
@@ -658,7 +658,7 @@ public class PartyManageScreen extends Screen {
                 if (!this.textBox.getValue().isEmpty()) {
                     if (!clientPartyAPI.getOwner().getUUID().equals(this.minecraft.player.getUUID())) {
                         this.minecraft.player.closeContainer();
-                        this.minecraft.player.sendSystemMessage(Component.translatable("text.openpacbp.player_not_owner"));
+                        this.minecraft.player.sendSystemMessage(Component.translatable("text.era_tweaks.player_not_owner"));
                         return;
                     }
                     Network.sendButtonClick("openpac player-config set parties.name "+text);
@@ -667,13 +667,13 @@ public class PartyManageScreen extends Screen {
                 if (!this.colorBox.getValue().isEmpty()) {
                     if (!clientPartyAPI.getOwner().getUUID().equals(this.minecraft.player.getUUID())) {
                         this.minecraft.player.closeContainer();
-                        this.minecraft.player.sendSystemMessage(Component.translatable("text.openpacbp.player_not_owner"));
+                        this.minecraft.player.sendSystemMessage(Component.translatable("text.era_tweaks.player_not_owner"));
                         return;
                     }
                     Network.sendButtonClick("openpac player-config set claims.color "+color);
                 }
                 if (!this.textBox.getValue().isEmpty() || !this.colorBox.getValue().isEmpty()) {
-                    this.minecraft.player.sendSystemMessage(Component.translatable("text.openpacbp.changes_applied"));
+                    this.minecraft.player.sendSystemMessage(Component.translatable("text.era_tweaks.changes_applied"));
                 }
             }
         }
@@ -757,7 +757,7 @@ public class PartyManageScreen extends Screen {
                 } else if (members.toString().contains(this.textBox.getValue())) {
                     player.closeContainer();
                     this.minecraft.player.sendSystemMessage(Component.translatable(
-                            "text.openpacbp.player_already_in_party",
+                            "text.era_tweaks.player_already_in_party",
                             this.managePlayerBox.getValue()
                     ));
                 }
@@ -779,7 +779,7 @@ public class PartyManageScreen extends Screen {
                 } else {
                     player.closeContainer();
                     this.minecraft.player.sendSystemMessage(Component.translatable(
-                            "text.openpacbp.player_not_in_party",
+                            "text.era_tweaks.player_not_in_party",
                             this.managePlayerBox.getValue()
                     ));
                 }

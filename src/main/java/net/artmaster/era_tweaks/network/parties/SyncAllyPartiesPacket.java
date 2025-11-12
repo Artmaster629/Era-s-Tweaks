@@ -1,4 +1,4 @@
-package net.artmaster.openpacbp.network.parties;
+package net.artmaster.era_tweaks.network.parties;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,7 +11,7 @@ import java.util.UUID;
 public record SyncAllyPartiesPacket(List<AllyData> allies) implements CustomPacketPayload {
 
     public static final ResourceLocation TYPE_ID =
-            ResourceLocation.fromNamespaceAndPath("openpacbp", "sync_ally_parties");
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "sync_ally_parties");
 
     public static final Type<SyncAllyPartiesPacket> TYPE = new Type<>(TYPE_ID);
 

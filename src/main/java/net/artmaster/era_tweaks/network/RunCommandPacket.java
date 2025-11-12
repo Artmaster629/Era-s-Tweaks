@@ -1,4 +1,4 @@
-package net.artmaster.openpacbp.network;
+package net.artmaster.era_tweaks.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record RunCommandPacket(String command) implements CustomPacketPayload {
     public static final ResourceLocation TYPE_ID =
-            ResourceLocation.fromNamespaceAndPath("openpacbp", "run_command");
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "run_command");
 
     public static final CustomPacketPayload.Type<RunCommandPacket> TYPE =
             new CustomPacketPayload.Type<>(TYPE_ID);

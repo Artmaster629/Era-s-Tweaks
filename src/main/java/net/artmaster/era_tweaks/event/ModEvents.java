@@ -1,15 +1,15 @@
-package net.artmaster.openpacbp.event;
+package net.artmaster.era_tweaks.event;
 
 
-import net.artmaster.openpacbp.ModMain;
-import net.artmaster.openpacbp.network.Network;
+import net.artmaster.era_tweaks.ModMain;
+import net.artmaster.era_tweaks.network.Network;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.ServerChatEvent;
 
-@Mod("openpacbp")
+@Mod("era_tweaks")
 @EventBusSubscriber(modid = ModMain.MODID)
 public class ModEvents {
 

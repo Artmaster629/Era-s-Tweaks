@@ -1,4 +1,4 @@
-package net.artmaster.openpacbp.utils;
+package net.artmaster.era_tweaks.utils;
 
 import net.luckperms.api.model.user.User;
 import net.minecraft.server.MinecraftServer;

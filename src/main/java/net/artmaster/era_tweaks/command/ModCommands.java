@@ -1,7 +1,7 @@
-package net.artmaster.openpacbp.command;
+package net.artmaster.era_tweaks.command;
 
-import net.artmaster.openpacbp.ModMain;
-import net.artmaster.openpacbp.network.Network;
+import net.artmaster.era_tweaks.ModMain;
+import net.artmaster.era_tweaks.network.Network;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 
 
-@Mod("openpacbp")
+@Mod("era_tweaks")
 @EventBusSubscriber(modid = ModMain.MODID)
 public class ModCommands {
 
@@ -36,7 +36,7 @@ public class ModCommands {
                                 IServerPartyAPI party = partyManager.getPartyByMember(player.getUUID());
                                 if (party == null) {
                                     Network.sendAllyParties(player, party);
-                                    player.displayClientMessage(Component.translatable("text.openpacbp.no_party_pm"), false);
+                                    player.displayClientMessage(Component.translatable("text.era_tweaks.no_party_pm"), false);
                                     return 0;
                                 }
                                 Network.sendOpenGui(player);

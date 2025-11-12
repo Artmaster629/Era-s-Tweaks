@@ -1,4 +1,4 @@
-package net.artmaster.openpacbp.network;
+package net.artmaster.era_tweaks.network;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ButtonClickPacket(String command) implements CustomPacketPayload {
 
     public static final ResourceLocation TYPE_ID =
-            ResourceLocation.fromNamespaceAndPath("openpacbp", "button_click");
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "button_click");
 
     public static final Type<ButtonClickPacket> TYPE =
             new Type<>(TYPE_ID);

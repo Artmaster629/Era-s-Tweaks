@@ -1,8 +1,8 @@
-package net.artmaster.openpacbp.network;
+package net.artmaster.era_tweaks.network;
 
-import net.artmaster.openpacbp.ModMain;
+import net.artmaster.era_tweaks.ModMain;
 
-import net.artmaster.openpacbp.network.parties.SyncAllyPartiesPacket;
+import net.artmaster.era_tweaks.network.parties.SyncAllyPartiesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Mod("openpacbp")
+@Mod("era_tweaks")
 @EventBusSubscriber(modid = ModMain.MODID)
 public class Network {
 
@@ -28,8 +28,8 @@ public class Network {
     // Регистрация пакетов
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        registrarClient = event.registrar("openpacbp");
-        registrarServer = event.registrar("openpacbp");
+        registrarClient = event.registrar("era_tweaks");
+        registrarServer = event.registrar("era_tweaks");
 
 
 

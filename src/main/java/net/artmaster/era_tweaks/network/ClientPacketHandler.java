@@ -1,7 +1,7 @@
-package net.artmaster.openpacbp.network;
+package net.artmaster.era_tweaks.network;
 
-import net.artmaster.openpacbp.client.PartyManageScreen;
-import net.artmaster.openpacbp.network.parties.SyncAllyPartiesPacket;
+import net.artmaster.era_tweaks.client.PartyManageScreen;
+import net.artmaster.era_tweaks.network.parties.SyncAllyPartiesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
