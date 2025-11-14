@@ -1,31 +1,26 @@
 package net.artmaster.era_tweaks.network;
 
-import net.artmaster.era_tweaks.client.PartyManageScreen;
-import net.artmaster.era_tweaks.network.parties.SyncAllyPartiesPacket;
+import net.artmaster.era_tweaks.client.UpgradeManageScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientPacketHandler {
-    public static void handleOpenGui() {
-        Minecraft.getInstance().setScreen(new PartyManageScreen());
+    public static void handleOpenGui(OpenGuiPacket packet) {
+        if (packet.resourceId().equals("upgrade_manage_screen")) {
+            Minecraft.getInstance().setScreen(new UpgradeManageScreen());
+        }
     }
+
+
 
     public static void handleRunCommand(RunCommandPacket packet) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             player.connection.sendCommand(packet.command());
         }
-    }
-
-    public static void handleSyncAllyParties(SyncAllyPartiesPacket pkt) {
-        Minecraft mc = Minecraft.getInstance();
-        mc.execute(() -> {
-            if (mc.screen instanceof PartyManageScreen screen) {
-                screen.setAllyNames(pkt.allies()); // добавим метод в экран
-            }
-        });
     }
 }
