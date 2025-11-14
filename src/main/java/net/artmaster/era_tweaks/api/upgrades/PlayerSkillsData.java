@@ -5,8 +5,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.SimpleContainer;
 
 
+
+
 public class PlayerSkillsData {
-    private final SimpleContainer container;
     private int miningLevel = 0;
     private int farmingLevel = 0;
     private int fightLevel = 0;
@@ -23,13 +24,6 @@ public class PlayerSkillsData {
     private int craftingProgress = 0;
     private int magicProgress = 0;
 
-    public PlayerSkillsData(int size) {
-        this.container = new SimpleContainer(size);
-    }
-
-    public SimpleContainer getContainer() {
-        return container;
-    }
 
     public int getMiningLevel() {
         return miningLevel;
@@ -131,9 +125,8 @@ public class PlayerSkillsData {
         this.magicProgress = newProgress;
     }
 
-    public static CompoundTag save(PlayerSkillsData data, HolderLookup.Provider registries) {
+    public static CompoundTag save(PlayerSkillsData data) {
         CompoundTag tag = new CompoundTag();
-        tag.put("Items", data.container.createTag(registries));
         tag.putInt("Mining", data.miningLevel);
         tag.putInt("Farming", data.farmingLevel);
         tag.putInt("Fight", data.fightLevel);
@@ -152,8 +145,7 @@ public class PlayerSkillsData {
         return tag;
     }
 
-    public static void load(PlayerSkillsData data, CompoundTag tag, HolderLookup.Provider registries) {
-        data.container.fromTag(tag.getList("Items", 10), registries);
+    public static void load(PlayerSkillsData data, CompoundTag tag) {
         data.miningLevel = tag.getInt("Mining");
         data.farmingLevel = tag.getInt("Farming");
         data.fightLevel = tag.getInt("Fight");
@@ -170,4 +162,23 @@ public class PlayerSkillsData {
         data.craftingProgress = tag.getInt("CraftingProgress");
         data.magicProgress = tag.getInt("MagicProgress");
     }
+
+    public void copyFrom(PlayerSkillsData other) {
+        this.miningLevel = other.miningLevel;
+        this.farmingLevel = other.farmingLevel;
+        this.fightLevel = other.fightLevel;
+        this.staminaLevel = other.staminaLevel;
+        this.buildingLevel = other.buildingLevel;
+        this.craftingLevel = other.craftingLevel;
+        this.magicLevel = other.magicLevel;
+
+        this.miningProgress = other.miningProgress;
+        this.farmingProgress = other.farmingProgress;
+        this.fightProgress = other.fightProgress;
+        this.staminaProgress = other.staminaProgress;
+        this.buildingProgress = other.buildingProgress;
+        this.craftingProgress = other.craftingProgress;
+        this.magicProgress = other.magicProgress;
+    }
+
 }
