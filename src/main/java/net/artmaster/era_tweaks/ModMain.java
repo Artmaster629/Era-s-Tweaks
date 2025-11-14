@@ -3,10 +3,10 @@ package net.artmaster.era_tweaks;
 
 import com.mojang.logging.LogUtils;
 
+import net.artmaster.era_tweaks.api.upgrades.MyAttachments;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
@@ -22,11 +22,13 @@ public class ModMain {
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
-    public ModMain(IEventBus modEventBus, ModContainer modContainer) {
+    public ModMain(IEventBus modEventBus) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        MyAttachments.register();
 
     }
+
 
 
     private void commonSetup(FMLCommonSetupEvent event) {
