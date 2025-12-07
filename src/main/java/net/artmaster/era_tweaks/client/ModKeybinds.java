@@ -2,6 +2,8 @@ package net.artmaster.era_tweaks.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.artmaster.era_tweaks.ModMain;
+import net.artmaster.era_tweaks.client.screen.ClassManageScreen;
+import net.artmaster.era_tweaks.client.screen.UpgradeManageScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -20,21 +22,36 @@ public class ModKeybinds {
                     "key.category.era_tweaks"                         // категория в Controls
             );
 
+    public static final KeyMapping OPEN_CLASS_SCREEN =
+            new KeyMapping(
+                    "key.era_tweaks.open_class_screen",                     // translation key
+                    InputConstants.Type.KEYSYM,                  // тип ввода
+                    GLFW.GLFW_KEY_H,                             // клавиша по умолчанию (G)
+                    "key.category.era_tweaks"                         // категория в Controls
+            );
+
     @SubscribeEvent
     public static void register(RegisterKeyMappingsEvent event) {
         event.register(OPEN_UPGRADE_SCREEN);
+        event.register(OPEN_CLASS_SCREEN);
     }
 
     @EventBusSubscriber(modid = ModMain.MODID, value = Dist.CLIENT)
     public static class ClientTickHandler {
         @SubscribeEvent
         public static void onClientTick(ClientTickEvent.Post event) {
-            // проверяем, сколько раз было нажато (consumeClick возвращает true столько раз, сколько нажатий)
+            //consumeClick возвращает true столько раз, сколько нажатий
             while (OPEN_UPGRADE_SCREEN.consumeClick()) {
                 Minecraft mc = Minecraft.getInstance();
-                // убедимся, что игрок и клиент готовы
                 if (mc.player != null) {
                     mc.setScreen(new UpgradeManageScreen());
+                }
+            }
+
+            while (OPEN_CLASS_SCREEN.consumeClick()) {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc.player != null) {
+                    mc.setScreen(new ClassManageScreen());
                 }
             }
         }
