@@ -193,11 +193,33 @@ dependencies {
     // This is the shared library for both modloaders. I recommend adding this for having sources data,
     // even if you do not use a multiloader setup.
     //modImplementation("xyz.bluspring.modernnetworking:modernnetworking-common:1.2.0+1.21.1")
-    implementation "curse.maven:open-parties-and-claims-636608:6859716"
+    //implementation "curse.maven:open-parties-and-claims-636608:6859716"
     //world map
-    implementation "curse.maven:open-parties-and-claims-317780:6778114"
+    //implementation "curse.maven:open-parties-and-claims-317780:6778114"
     //minimap
-    implementation "curse.maven:open-parties-and-claims-263420:6778051"
+    //implementation "curse.maven:open-parties-and-claims-263420:6778051"
+
+    //parcool
+    implementation "curse.maven:parcool-482378:6940391"
+0
+    //irons_spellbooks
+    implementation "curse.maven:irons_spellbooks-855414:7262331"
+    implementation "curse.maven:player_animator-658587:6024462"
+    implementation "curse.maven:curios-309927:6529130"
+    implementation "curse.maven:geckolib-388172:7023453"
+
+    //additional attributes
+    //implementation "curse.maven:aa-986624:6388896"
+
+
+    //origins
+    //implementation "curse.maven:origins-1375372:7216492"
+
+    //harvest-with-ease
+    implementation "curse.maven:harvest_with_ease-602171:5968872"
+    ////cobweb
+    implementation "curse.maven:cobweb-968456:7186943"
+
 
     compileOnly "net.luckperms:api:5.4"
 
