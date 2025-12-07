@@ -3,7 +3,10 @@ package net.artmaster.era_tweaks;
 
 import com.mojang.logging.LogUtils;
 
-import net.artmaster.era_tweaks.api.upgrades.MyAttachments;
+import net.artmaster.era_tweaks.api.container.MyAttachments;
+import net.artmaster.era_tweaks.config.BlockXpConfig;
+import net.artmaster.era_tweaks.config.HarvestXpConfig;
+import net.artmaster.era_tweaks.config.ItemXpConfig;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -26,6 +29,9 @@ public class ModMain {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         MyAttachments.register();
+        BlockXpConfig.load();
+        ItemXpConfig.load();
+        HarvestXpConfig.load();
 
     }
 
