@@ -10,16 +10,19 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Consumer;
 
 //Кнопка с поддержкой текстур
-public class ColorButton extends AbstractWidget {
+public class ImageButton extends AbstractWidget {
     private final ResourceLocation texture;
-    private final Consumer<ColorButton> onPress;
+    private final String id;
+    private final Consumer<ImageButton> onPress;
 
-    public ColorButton(int x, int y, int width, int height,
-                               ResourceLocation texture,
-                               Component message,
-                               Consumer<ColorButton> onPress) {
+    public ImageButton(int x, int y, int width, int height,
+                       ResourceLocation texture,
+                       Component message,
+                       String id,
+                       Consumer<ImageButton> onPress) {
         super(x, y, width, height, message);
         this.texture = texture;
+        this.id = id;
         this.onPress = onPress;
     }
 
@@ -41,6 +44,12 @@ public class ColorButton extends AbstractWidget {
                 0xFFFFFF
         );
 
+
+
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
