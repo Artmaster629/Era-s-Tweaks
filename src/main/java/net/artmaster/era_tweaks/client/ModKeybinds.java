@@ -2,7 +2,9 @@ package net.artmaster.era_tweaks.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.artmaster.era_tweaks.ModMain;
+import net.artmaster.era_tweaks.api.container.MyAttachments;
 import net.artmaster.era_tweaks.client.screen.ClassManageScreen;
+import net.artmaster.era_tweaks.client.screen.ClassSelectScreen;
 import net.artmaster.era_tweaks.client.screen.UpgradeManageScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -30,11 +32,16 @@ public class ModKeybinds {
                     "key.category.era_tweaks"                         // категория в Controls
             );
 
-    @SubscribeEvent
-    public static void register(RegisterKeyMappingsEvent event) {
-        event.register(OPEN_UPGRADE_SCREEN);
-        event.register(OPEN_CLASS_SCREEN);
-    }
+    public static final KeyMapping OPEN_CLASS_SELECT_SCREEN =
+            new KeyMapping(
+                    "key.era_tweaks.open_class_select_screen",                     // translation key
+                    InputConstants.Type.KEYSYM,                  // тип ввода
+                    GLFW.GLFW_KEY_F,                             // клавиша по умолчанию (G)
+                    "key.category.era_tweaks"                         // категория в Controls
+            );
+
+
+
 
     @EventBusSubscriber(modid = ModMain.MODID, value = Dist.CLIENT)
     public static class ClientTickHandler {
@@ -54,6 +61,27 @@ public class ModKeybinds {
                     mc.setScreen(new ClassManageScreen());
                 }
             }
+
+            while (OPEN_CLASS_SELECT_SCREEN.consumeClick()) {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc.player != null) {
+                    var data = mc.player.getData(MyAttachments.PLAYER_CLASS);
+                    if (!data.getPlayerSubClass().equals("unknown")) {
+                        return;
+                    }
+                    mc.setScreen(new ClassSelectScreen());
+                }
+            }
+        }
+    }
+
+    @EventBusSubscriber(modid = ModMain.MODID, value = Dist.CLIENT)
+    public static class ClientKeybinds {
+        @SubscribeEvent
+        public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+            event.register(OPEN_UPGRADE_SCREEN);
+            event.register(OPEN_CLASS_SCREEN);
+            event.register(OPEN_CLASS_SELECT_SCREEN);
         }
     }
 }
