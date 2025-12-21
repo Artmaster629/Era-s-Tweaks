@@ -50,7 +50,7 @@ public class ModCommands {
 
         event.getDispatcher().register(
                 Commands.literal("player_class")
-                        .then(Commands.literal("set")
+                        .then(Commands.literal("setclass")
                                 .then(Commands.argument("classname", StringArgumentType.string())
                                         .executes(ctx -> {
                                             CommandSourceStack source = ctx.getSource();
@@ -66,6 +66,28 @@ public class ModCommands {
                                                 Network.syncClasses(player);
 
                                                 source.sendSuccess(() -> Component.literal("Класс игрока "+player.getName()+" успешно изменён на "+className+"."), true);
+                                            }
+
+                                            return 1;
+                                        })
+                                )
+                        )
+                        .then(Commands.literal("setsubclass")
+                                .then(Commands.argument("classname", StringArgumentType.string())
+                                        .executes(ctx -> {
+                                            CommandSourceStack source = ctx.getSource();
+                                            String className = StringArgumentType.getString(ctx, "classname");
+
+                                            if (source.getEntity() instanceof ServerPlayer player) {
+
+                                                PlayerClassData data = player.getData(MyAttachments.PLAYER_CLASS);
+                                                data.changePlayerSubClass(className);
+
+
+                                                Network.syncSkills(player);
+                                                Network.syncClasses(player);
+
+                                                source.sendSuccess(() -> Component.literal("Подкласс игрока "+player.getName()+" успешно изменён на "+className+"."), true);
                                             }
 
                                             return 1;
