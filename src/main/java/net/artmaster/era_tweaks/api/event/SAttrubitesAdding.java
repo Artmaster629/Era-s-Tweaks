@@ -9,10 +9,13 @@ import net.artmaster.era_tweaks.api.container.MyAttachments;
 import net.artmaster.era_tweaks.config.BlockXpConfig;
 import net.artmaster.era_tweaks.config.HarvestXpConfig;
 import net.artmaster.era_tweaks.config.ItemXpConfig;
+import net.artmaster.era_tweaks.network.Network;
+import net.artmaster.era_tweaks.utils.ServerScheduler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.artmaster.era_tweaks.client.BossbarManager;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -44,6 +47,7 @@ public class SAttrubitesAdding {
 
         if (event.getLevel() instanceof ServerLevel level && event.getPlayer() instanceof ServerPlayer player) {
             var data = player.getData(MyAttachments.PLAYER_SKILLS);
+
             var getblock = level.getBlockState(BlockPos.containing(event.getPos().getX(), event.getPos().getY(), event.getPos().getZ())).getBlock();
             String blockId = BuiltInRegistries.BLOCK.getKey(getblock).toString();
             double multiplier = BlockXpConfig.getMultiplier(blockId);
@@ -53,13 +57,16 @@ public class SAttrubitesAdding {
             if (data.getMiningLevel() < 100) {
                 double progress = multiplier/data.getMiningLevel();
                 data.setMiningProgress(data.getMiningProgress()+progress);
+                BossbarManager.updateBossbar(player, data.getMiningProgress(), progress, "mining");
+                ServerScheduler.schedule(60, () -> {
+                    BossbarManager.removeBossbar(player);
+                });
             }
             if (data.getMiningProgress() >= 100) {
                 data.setMiningProgress(0);
                 data.setMiningLevel(data.getMiningLevel()+1);
                 int oldLevel = data.getMiningLevel()-1;
-                player.displayClientMessage(Component.literal("Ваш уровень Добычи повышен с "+oldLevel+" на "+data.getMiningLevel()), false);
-
+                Network.serverDataAction("Ваш уровень Добычи повышен с "+oldLevel+" на "+data.getMiningLevel(), 7);
 
                 AttributeInstance miningSpeed = player.getAttribute(Attributes.SUBMERGED_MINING_SPEED);
                 AttributeInstance miningEfficiency = player.getAttribute(Attributes.MINING_EFFICIENCY);
@@ -76,10 +83,24 @@ public class SAttrubitesAdding {
                 miningSpeed.addPermanentModifier(modifier1);
                 miningEfficiency.addPermanentModifier(modifier2);
 
+                var classdata = player.getData(MyAttachments.PLAYER_CLASS);
+                if (classdata.getUpgradesPointsProgress() < 4) {
+                    classdata.addUpgradesPointsProgress(1);
+                } else {
+                    classdata.setUpgradesPointsProgress(0);
+                    classdata.addUpgradesPoints(1);
+                    Network.serverDataAction("Вы получили очко прокачки!", 7);
+                }
+
+
+
+
+
             }
 
 
             syncSkills(player);
+            syncClasses(player);
         }
     }
 
@@ -104,13 +125,16 @@ public class SAttrubitesAdding {
             if (data.getFarmingLevel() < 100) {
                 double progress = multiplier/data.getFarmingLevel();
                 data.setFarmingProgress(data.getFarmingProgress()+progress);
+                BossbarManager.updateBossbar(player, data.getFarmingProgress(), progress, "farming");
+                ServerScheduler.schedule(60, () -> {
+                    BossbarManager.removeBossbar(player);
+                });
             }
             if (data.getFarmingProgress() >= 100) {
                 data.setFarmingProgress(0);
                 data.setFarmingLevel(data.getFarmingLevel()+1);
                 int oldLevel = data.getFarmingLevel()-1;
-                player.displayClientMessage(Component.literal("Ваш уровень Фермерства повышен с "+oldLevel+" на "+data.getFarmingLevel()), false);
-
+                Network.serverDataAction("Ваш уровень Фермерства повышен с "+oldLevel+" на "+data.getFarmingLevel(), 7);
 
                 AttributeInstance harvest = player.getAttribute(Attributes.LUCK);
                 AttributeModifier modifier = new AttributeModifier(
@@ -120,12 +144,22 @@ public class SAttrubitesAdding {
                 );
                 harvest.addPermanentModifier(modifier);
 
+                var classdata = player.getData(MyAttachments.PLAYER_CLASS);
+                if (classdata.getUpgradesPointsProgress() < 4) {
+                    classdata.addUpgradesPointsProgress(1);
+                } else {
+                    classdata.setUpgradesPointsProgress(0);
+                    classdata.addUpgradesPoints(1);
+                    Network.serverDataAction("Вы получили очко прокачки!", 7);
+                }
+
             }
 
 
 
 
             syncSkills(player);
+            syncClasses(player);
         }
     }
 
@@ -142,18 +176,32 @@ public class SAttrubitesAdding {
             if (data.getCraftingLevel() < 100) {
                 double progress = multiplier/data.getCraftingLevel();
                 data.setCraftingProgress(data.getCraftingProgress()+progress);
+                BossbarManager.updateBossbar(player, data.getCraftingProgress(), progress, "crafting");
+                ServerScheduler.schedule(60, () -> {
+                    BossbarManager.removeBossbar(player);
+                });
             }
             if (data.getCraftingProgress() >= 100) {
                 data.setCraftingProgress(0);
                 data.setCraftingLevel(data.getCraftingLevel()+1);
                 int oldLevel = data.getCraftingLevel()-1;
-                player.displayClientMessage(Component.literal("Ваш уровень Создания повышен с "+oldLevel+" на "+data.getCraftingLevel()), false);
+                Network.serverDataAction("Ваш уровень Создания повышен с "+oldLevel+" на "+data.getCraftingLevel(), 7);
+
+                var classdata = player.getData(MyAttachments.PLAYER_CLASS);
+                if (classdata.getUpgradesPointsProgress() < 4) {
+                    classdata.addUpgradesPointsProgress(1);
+                } else {
+                    classdata.setUpgradesPointsProgress(0);
+                    classdata.addUpgradesPoints(1);
+                    Network.serverDataAction("Вы получили очко прокачки!", 7);
+                }
             }
 
 
 
 
             syncSkills(player);
+            syncClasses(player);
         }
     }
 
@@ -185,7 +233,6 @@ public class SAttrubitesAdding {
     @SubscribeEvent
     public static void onAttackAddXp(SpellPreCastEvent event) {
 
-        System.out.println("preCast!");
 
         if (event.getEntity() instanceof ServerPlayer player) {
             var data = player.getData(MyAttachments.PLAYER_SKILLS);
@@ -199,15 +246,19 @@ public class SAttrubitesAdding {
             //Начисление прогресса
             if (data.getMagicProgress() < 100) {
                 double progress = multiplier/data.getMagicLevel();
-                System.out.println(progress);
                 data.setMagicProgress(data.getMagicProgress()+progress);
+                BossbarManager.updateBossbar(player, data.getMagicProgress(), progress, "magic");
+                ServerScheduler.schedule(60, () -> {
+                    BossbarManager.removeBossbar(player);
+                });
 
             }
             if (data.getMagicProgress() >= 100) {
                 data.setMagicProgress(0);
                 data.setMagicLevel(data.getMagicLevel()+1);
                 int oldLevel = data.getMagicLevel()-1;
-                player.displayClientMessage(Component.literal("Ваш уровень Магии повышен с "+oldLevel+" на "+data.getMagicLevel()), false);
+                Network.serverDataAction("Ваш уровень Магии повышен с "+oldLevel+" на "+data.getMagicLevel(), 7);
+
 
                 AttributeInstance spellPower = player.getAttribute(AttributeRegistry.SPELL_POWER);
                 AttributeInstance spellResist = player.getAttribute(AttributeRegistry.SPELL_RESIST);
@@ -222,10 +273,22 @@ public class SAttrubitesAdding {
                 spellPower.addPermanentModifier(modifier);
                 spellResist.addPermanentModifier(modifier);
                 castTime.addPermanentModifier(modifier);
+
+                var classdata = player.getData(MyAttachments.PLAYER_CLASS);
+                if (classdata.getUpgradesPointsProgress() < 4) {
+                    classdata.addUpgradesPointsProgress(1);
+                } else {
+                    classdata.setUpgradesPointsProgress(0);
+                    classdata.addUpgradesPoints(1);
+                    Network.serverDataAction("Вы получили очко прокачки!", 7);
+                }
             }
 
 
             syncSkills(player);
+            syncClasses(player);
+
+
         }
     }
 
@@ -242,15 +305,19 @@ public class SAttrubitesAdding {
             //Начисление прогресса
             if (data.getFightLevel() < 100) {
                 double progress = multiplier/data.getFightLevel();
-                System.out.println(progress);
                 data.setFightProgress(data.getFightProgress()+progress);
+                BossbarManager.updateBossbar(player, data.getFightProgress(), progress, "fight");
+                ServerScheduler.schedule(60, () -> {
+                    BossbarManager.removeBossbar(player);
+                });
 
             }
             if (data.getFightProgress() >= 100) {
                 data.setFightProgress(0);
                 data.setFightLevel(data.getFightLevel()+1);
                 int oldLevel = data.getFightLevel()-1;
-                player.displayClientMessage(Component.literal("Ваш уровень Боевого искусства повышен с "+oldLevel+" на "+data.getFightLevel()), false);
+                Network.serverDataAction("Ваш уровень Боевого искусства повышен с "+oldLevel+" на "+data.getFightLevel(), 7);
+
 
                 AttributeInstance attackDamage = player.getAttribute(Attributes.ATTACK_DAMAGE);
                 AttributeModifier modifier = new AttributeModifier(
@@ -259,10 +326,19 @@ public class SAttrubitesAdding {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE
                 );
                 attackDamage.addPermanentModifier(modifier);
+                var classdata = player.getData(MyAttachments.PLAYER_CLASS);
+                if (classdata.getUpgradesPointsProgress() < 5) {
+                    classdata.addUpgradesPointsProgress(1);
+                } else {
+                    classdata.setUpgradesPointsProgress(0);
+                    classdata.addUpgradesPoints(1);
+                    Network.serverDataAction("Вы получили очко прокачки!", 7);
+                }
             }
 
 
             syncSkills(player);
+            syncClasses(player);
         }
     }
 
@@ -276,6 +352,8 @@ public class SAttrubitesAdding {
         if (event.getEntity() instanceof ServerPlayer player) {
             syncSkills(player);
             syncClasses(player);
+            var data = player.getData(MyAttachments.PLAYER_CLASS);
+            player.sendSystemMessage(Component.literal("F - открыть меню выбора класса \nG - открыть меню прокачки атрибутов \nH - меня прокачки навыков\nИ помни - ты "+ Component.translatable("text.era_tweaks."+data.getPlayerClass()+"_class").getString()+" типа "+Component.translatable("text.era_tweaks."+data.getPlayerSubClass()+"_subclass").getString()));
         }
     }
 }
