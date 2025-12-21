@@ -14,7 +14,6 @@ public class SkillsManager {
 
     public static void makeChangesToClass(PlayerClassData data, ServerPlayer player) {
         var player_skills = data.getPlayerSkills();
-        System.out.println(player_skills);
         if (player_skills.contains("maxicka13")) {
             AttributeInstance spellPower = player.getAttribute(AttributeRegistry.BLOOD_SPELL_POWER);
 
