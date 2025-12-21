@@ -9,8 +9,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
-
+@OnlyIn(Dist.CLIENT)
 public class UpgradeManageScreen extends Screen {
 
 
@@ -20,7 +22,7 @@ public class UpgradeManageScreen extends Screen {
 
 
     private static final ResourceLocation CENTER_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/attribute_manage_texture_bg.png");
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/attribute_manage_texture_bg_2.png");
 
 
 
@@ -404,7 +406,7 @@ public class UpgradeManageScreen extends Screen {
 
         guiGraphics.drawCenteredString(
                 this.font,
-                Component.translatable("text.era_tweaks."+className),
+                Component.translatable("text.era_tweaks."+className+"_class"),
                 (int) drawX,
                 (int) drawY,
                 0xFFFFFF
