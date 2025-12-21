@@ -7,22 +7,26 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 //Кнопка с поддержкой текстур
 public class ImageButton extends AbstractWidget {
     private final ResourceLocation texture;
     private final String id;
+    private final List<Component> tooltip;
     private final Consumer<ImageButton> onPress;
 
     public ImageButton(int x, int y, int width, int height,
                        ResourceLocation texture,
                        Component message,
                        String id,
+                       List<Component> tooltip,
                        Consumer<ImageButton> onPress) {
         super(x, y, width, height, message);
         this.texture = texture;
         this.id = id;
+        this.tooltip = tooltip;
         this.onPress = onPress;
     }
 
@@ -45,11 +49,21 @@ public class ImageButton extends AbstractWidget {
         );
 
 
+        if (mouseX > getX() && mouseX < getX()+getWidth() && mouseY > getY() && mouseY < getY()+getHeight()) {
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+        }
+
+
+
+
 
     }
 
     public String getId() {
         return id;
+    }
+    public List<Component> getTooltipCustom() {
+        return tooltip;
     }
 
     @Override
