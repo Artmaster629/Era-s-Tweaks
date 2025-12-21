@@ -1,19 +1,22 @@
 package net.artmaster.era_tweaks.network;
 
 import com.alrex.parcool.api.Attributes;
-import com.alrex.parcool.api.Stamina;
 import net.artmaster.era_tweaks.ModMain;
 
 import net.artmaster.era_tweaks.api.SkillsManager;
 import net.artmaster.era_tweaks.api.container.MyAttachments;
 import net.artmaster.era_tweaks.api.container.PlayerClassData;
 import net.artmaster.era_tweaks.api.container.PlayerSAttrubitesData;
+import net.artmaster.era_tweaks.client.BossbarManager;
 import net.artmaster.era_tweaks.client.ClientPacketHandler;
+import net.artmaster.era_tweaks.utils.ServerScheduler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -59,42 +62,19 @@ public class Network {
         registrarClient.playToClient(
                 SyncPlayerSkillsPacket.TYPE,
                 SyncPlayerSkillsPacket.CODEC,
-                (packet, ctx) -> ctx.enqueueWork(() -> {
-                    var player = Minecraft.getInstance().player;
-                    if (player == null) return;
-
-
-
-                    var data = player.getData(MyAttachments.PLAYER_SKILLS);
-                    PlayerSAttrubitesData.load(data, packet.data());
-                })
+                (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleSyncPlayerSkills(packet))
         );
 
         registrarClient.playToClient(
                 SyncPlayerClassPacket.TYPE,
                 SyncPlayerClassPacket.CODEC,
-                (packet, ctx) -> ctx.enqueueWork(() -> {
-                    var player = Minecraft.getInstance().player;
-                    if (player == null) return;
-
-
-
-                    var data = player.getData(MyAttachments.PLAYER_CLASS);
-                    PlayerClassData.load(data, packet.data());
-                })
+                (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleSyncPlayerClass(packet))
         );
 
         registrarClient.playToClient(
                 StaminaPacket.TYPE,
                 StaminaPacket.CODEC,
-                (packet, ctx) -> ctx.enqueueWork(() -> {
-                    var player = Minecraft.getInstance().player;
-                    if (player == null) return;
-
-
-                    var stamina = Stamina.get(player);
-                    stamina.consume(packet.stamina());
-                })
+                (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleStaminaConsume(packet))
         );
 
 
@@ -118,20 +98,52 @@ public class Network {
 
                     var data = player.getData(MyAttachments.PLAYER_CLASS);
 
-                    boolean isIncluded = false;
+                    if (packet.actionType() == 1) {
+                        boolean isIncluded = false;
 
-                    for (String skill : data.getPlayerSkills()) {
-                        if (skill.equals(packet.skill())) {
-                            isIncluded = true;
+                        for (String skill : data.getPlayerSkills()) {
+                            if (skill.equals(packet.key())) {
+                                isIncluded = true;
+                            }
+                        }
+
+
+                        if (!isIncluded) {
+                            data.getPlayerSkills().add(packet.key());
+                            syncClasses(player);
+                            SkillsManager.makeChangesToClass(data, player);
                         }
                     }
-
-
-                    if (!isIncluded) {
-                        data.getPlayerSkills().add(packet.skill());
+                    if (packet.actionType() == 2) {
+                        data.changePlayerClass(packet.key());
+                        syncSkills(player);
                         syncClasses(player);
                         SkillsManager.makeChangesToClass(data, player);
                     }
+                    if (packet.actionType() == 3) {
+                        data.changePlayerSubClass(packet.key());
+                        syncSkills(player);
+                        syncClasses(player);
+                        SkillsManager.makeChangesToClass(data, player);
+                    }
+                    if (packet.actionType() == 4) {
+                        player.closeContainer();
+                    }
+                    if (packet.actionType() == 5) {
+                        player.addEffect((new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 3)));
+                    }
+                    if (packet.actionType() == 6) {
+                        player.displayClientMessage(Component.translatable(packet.key()), false);
+                    }
+                    if (packet.actionType() == 7) {
+                        player.displayClientMessage(Component.literal(packet.key()), false);
+                    }
+                    if (packet.actionType() == 8) {
+                        player.setJumping(false);
+                    }
+
+
+
 
 
 
@@ -150,6 +162,10 @@ public class Network {
                     PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
                     if (data.getStaminaLevel() < 100) {
                         data.setStaminaProgress(data.getStaminaProgress()+packet.stamina());
+                        BossbarManager.updateBossbar(player, data.getStaminaProgress(), data.getStaminaProgress()+packet.stamina(), "stamina");
+                        ServerScheduler.schedule(60, () -> {
+                            BossbarManager.removeBossbar(player);
+                        });
                     }
                     if (data.getStaminaProgress() >= 100) {
                         data.setStaminaProgress(0);
@@ -171,8 +187,17 @@ public class Network {
                         );
                         maxStamina.addPermanentModifier(modifier1);
                         staminaRecovery.addPermanentModifier(modifier2);
+                        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
+                        if (classdata.getUpgradesPointsProgress() < 4) {
+                            classdata.addUpgradesPointsProgress(1);
+                        } else {
+                            classdata.setUpgradesPointsProgress(0);
+                            classdata.addUpgradesPoints(1);
+                            Network.serverDataAction("Вы получили очко прокачки!", 7);
+                        }
                     }
                     syncSkills(player);
+                    syncClasses(player);
                 })
         );
 
@@ -187,10 +212,10 @@ public class Network {
 
 
 
-
-    // Отправка нажатия кнопки (клиент -> сервер)
-    public static void sendNewSkill(String skill) {
-        Minecraft.getInstance().getConnection().send(new SyncPlayerClassToServerPacket(skill));
+    ////ДЕЙСТВИЯ С НАВЫКАМИ ИЗ-ПОД КЛИЕНТА////
+    // Отправка действия из-под клиента на сервер (клиент -> сервер)
+    public static void serverDataAction(String key, int actionType) {
+        Minecraft.getInstance().getConnection().send(new SyncPlayerClassToServerPacket(key, actionType));
     }
 
     // Отправка GUI (сервер -> клиент)
