@@ -85,9 +85,31 @@ description='''${mod_description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="parcool"
+    type="required"
+    # This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="3.4.1)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="harvest_with_ease"
+    type="required"
+    # This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="9)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="irons_spellbooks"
+    type="required"
+    # This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="1.21.1-3.14)"
+    ordering="NONE"
+    side="BOTH"
 
 [[mixins]]
-config = "mixins.era_tweaks.json"
+config="mixins.era_tweaks.client.json"
+side="CLIENT"
 
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
