@@ -5,14 +5,20 @@ import com.mojang.logging.LogUtils;
 
 import net.artmaster.era_tweaks.api.container.MyAttachments;
 import net.artmaster.era_tweaks.config.BlockXpConfig;
+import net.artmaster.era_tweaks.config.DeniedConfig;
 import net.artmaster.era_tweaks.config.HarvestXpConfig;
 import net.artmaster.era_tweaks.config.ItemXpConfig;
+import net.artmaster.era_tweaks.utils.ServerScheduler;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.util.thread.SidedThreadGroups;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
+
+import java.util.AbstractMap;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ModMain.MODID)
@@ -32,8 +38,10 @@ public class ModMain {
         BlockXpConfig.load();
         ItemXpConfig.load();
         HarvestXpConfig.load();
+        DeniedConfig.load();
 
     }
+
 
 
 
@@ -47,5 +55,10 @@ public class ModMain {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("Готов служить Мастерии на сервере!");
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(ServerTickEvent.Post event) {
+        ServerScheduler.tick();
     }
 }
