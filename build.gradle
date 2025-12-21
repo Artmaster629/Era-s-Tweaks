@@ -220,6 +220,8 @@ dependencies {
     ////cobweb
     implementation "curse.maven:cobweb-968456:7186943"
 
+    implementation "curse.maven:curios-309927:6529130"
+
 
     compileOnly "net.luckperms:api:5.4"
 
