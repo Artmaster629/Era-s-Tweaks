@@ -1,57 +1,58 @@
 {
-
   "text.era_tweaks.unknown_class": "Curious",
   "gui.era_tweaks.player_class_menu_button": "Class",
+  "text.era_tweaks.assistant_class": "Assistant",
+  "text.era_tweaks.wizard_class": "Wizard",
+  "text.era_tweaks.warrior_class": "Warrior",
+
+  "text.era_tweaks.commissar_subclass": "Commissar",
+  "text.era_tweaks.alchemist_subclass": "Alchemist",
+  "text.era_tweaks.smith_subclass": "Smith",
+
+  "text.era_tweaks.druid_subclass": "Druid",
+  "text.era_tweaks.priest_subclass": "Priest",
+  "text.era_tweaks.necromancer_subclass": "Necromancer",
+
+  "text.era_tweaks.paladin_subclass": "Paladin",
+  "text.era_tweaks.bowman_subclass": "Bowman",
+  "text.era_tweaks.scout_subclass": "Scout",
+
+  "text.era_tweaks.unknown_subclass": "Pi...",
+
+  "sattribute.era_tweaks.building": "Building",
+  "sattribute.era_tweaks.mining": "Mining",
+  "sattribute.era_tweaks.farming": "Farming",
+  "sattribute.era_tweaks.fight": "Fight",
+  "sattribute.era_tweaks.stamina": "Stamina",
+  "sattribute.era_tweaks.crafting": "Crafting",
+  "sattribute.era_tweaks.magic": "Magic",
+
+
+  "text.era_tweaks.skill": "Skill",
+
+  "skill.era_tweaks.skill44": "Skill 44",
+  "skill.era_tweaks.skill43": "Skill 43",
+  "skill.era_tweaks.skill42": "Skill 42",
+  "skill.era_tweaks.skill41": "Skill 41",
+
+  "tooltip.era_tweaks.paladin_desc": "§7§oA typical paladin is a mighty warrior in shining armor, channeling his strength to protect the weak. Two-handed swords and heavy armor are your path, and holy magic will help you overcome your enemies.",
+  "tooltip.era_tweaks.bowman_desc": "§7§oA good bowman is a professional in his field. Professionals have standards. Be polite. Be efficient. Have a plan to kill everyone you meet. Bows, crossbows—these are all suitable for covering your comrades from afar.",
+  "tooltip.era_tweaks.scout_desc": "§7§oScouts are agile and nimble. Though your health is not great, you are blessed with speed and strength. A few quick strikes, turn, repeat — and your target gone. Maybe.",
+  "tooltip.era_tweaks.warrior_desc": "§7§oWarrior is a class for true fans of both close and long-range weapon combat. Be a man (even if you're a woman) – choose our candidate! And depending on your subclass, you can be a mighty fighter clad in armor, charging forward and crushing enemies like a tank; a cautious marksman, raining down arrows on the enemy; or a light and sneaky assassin, ready to plunge a light blade into a distracted enemy.",
+
+
+  "tooltip.era_tweaks.skill_requirements": "Requirements:",
+
+  "key.category.era_tweaks": "Era Tweaks",
+  "key.era_tweaks.open_class_screen": "Open Class Upgrades Menu",
+  "key.era_tweaks.open_class_select_screen": "Open Class Select Menu",
+  "key.era_tweaks.open_upgrade_screen": "Open Attribute Upgrades Menu",
+
+  "text.era_tweaks.another_class": "Being %s, you cannot learn the %s's skills!",
 
 
 
 
-  "gui.openpacbp.market_global_button": "To the Market",
-  "gui.openpacbp.party_manage_allies_actions_text_string": "Manage Allies",
-  "gui.openpacbp.party_manage_allies_count_text": "Allies: %s/%s",
-  "gui.openpacbp.party_manage_allies_textbox": "Manage Allies",
-  "gui.openpacbp.party_manage_allies_title": "Allies: %s/%s",
-  "gui.openpacbp.party_manage_ally_add_button_text": "Add",
-  "gui.openpacbp.party_manage_ally_remove_button_text": "Remove",
-  "gui.openpacbp.party_manage_button_rank_admin": "A",
-  "gui.openpacbp.party_manage_button_rank_member": "M",
-  "gui.openpacbp.party_manage_button_rank_moderator": "O",
-  "gui.openpacbp.party_manage_chunks_text": "Chunks: %s/%s",
-  "gui.openpacbp.party_manage_close_button_text": "Exit",
-  "gui.openpacbp.party_manage_color_text_string": "Guild Color",
-  "gui.openpacbp.party_manage_color_textbox": "Set Guild Color",
-  "gui.openpacbp.party_manage_invite_button_text": "Invite",
-  "gui.openpacbp.party_manage_invites_count_text": "Invites: %s/%s",
-  "gui.openpacbp.party_manage_invites_title": "Invites: %s/%s",
-  "gui.openpacbp.party_manage_kick_button_text": "Kick",
-  "gui.openpacbp.party_manage_market_button_text": "Market",
-  "gui.openpacbp.party_manage_member_count_text": "Members: %s/%s",
-  "gui.openpacbp.party_manage_members_title": "Members: %s/%s",
-  "gui.openpacbp.party_manage_name_text_string": "Guild Name",
-  "gui.openpacbp.party_manage_name_textbox": "Set Guild Name",
-  "gui.openpacbp.party_manage_party_color_text": "§fColor: §r%s",
-  "gui.openpacbp.party_manage_party_name_text": "Name: %s",
-  "gui.openpacbp.party_manage_party_owner_text": "Owner: %s",
-  "gui.openpacbp.party_manage_player_actions_text_string": "Manage Player",
-  "gui.openpacbp.party_manage_player_textbox": "Manage Player",
-  "gui.openpacbp.party_manage_save_button_text": "Save",
-  "gui.openpacbp.party_manage_screen_title": "GUILD MANAGEMENT SYSTEM",
-  "gui.openpacbp.party_market_screen_button_text": "Our Page",
-  "gui.openpacbp.party_market_title": "Our Page",
-  "text.openpacbp.changes_applied": "§aChanges applied!",
-  "text.openpacbp.no_party_party_manage": "§7You must create a guild to use the guild management menu! \n§7To create a guild, type §8/§bopenpac-parties §3create§r.",
-  "text.openpacbp.party_limit_reached": "§7Your guild has reached the maximum number of chunks!",
-  "text.openpacbp.party_required": "§7You must be in a guild to claim land!",
-  "text.openpacbp.player_already_in_party": "Player %s is already in our guild!",
-  "text.openpacbp.player_not_in_party": "Player %s is not in our guild!",
-  "tooltip.openpacbp.admin_rank_button_desc": "This button will change the rank of the player specified above to guild administrator.",
-  "tooltip.openpacbp.color_box_desc": "Enter a new guild color and it will be applied.\nInput supports HEX format, but you can also use the preset color buttons below.\n§cAttention! This option can only be used by guild owners!",
-  "tooltip.openpacbp.leave_button_desc": "To exit the menu, press this button. If you want to save changes, press ''Save''.",
-  "tooltip.openpacbp.manage_allies_box_desc": "Enter the name of a guild owner to add or remove their guild from allies.\nYou can press TAB to switch between players currently online.",
-  "tooltip.openpacbp.manage_player_box_desc": "Enter a player’s name to interact with them using the buttons below.\nYou can press TAB to switch between players currently online.",
-  "tooltip.openpacbp.market_button_desc": "To go to the guild market, press this button.",
-  "tooltip.openpacbp.member_rank_button_desc": "This button will change the rank of the player specified above to regular guild member.",
-  "tooltip.openpacbp.moderator_rank_button_desc": "This button will change the rank of the player specified above to guild moderator.",
-  "tooltip.openpacbp.save_button_desc": "To save changes, press this button.",
-  "tooltip.openpacbp.text_box_desc": "Enter a new guild name and it will be renamed.\n§cAttention! This option can only be used by guild owners!"
+  "title.era_tweaks.select_class": "Choose the class",
+  "title.era_tweaks.select_subclass": "Choose the subclass"
 }
