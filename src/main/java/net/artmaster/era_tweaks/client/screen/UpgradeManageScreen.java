@@ -1,16 +1,27 @@
 package net.artmaster.era_tweaks.client.screen;
 
-import net.artmaster.era_tweaks.api.container.MyAttachments;
-import net.artmaster.era_tweaks.api.container.PlayerSAttrubitesData;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.artmaster.era_tweaks.custom.data.PlayerClassData;
+import net.artmaster.era_tweaks.network.Network;
+import net.artmaster.era_tweaks.registry.ModAttachments;
+import net.artmaster.era_tweaks.custom.data.PlayerSAttrubitesData;
+import net.artmaster.era_tweaks.custom.gui.ImageButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class UpgradeManageScreen extends Screen {
@@ -24,11 +35,46 @@ public class UpgradeManageScreen extends Screen {
     private static final ResourceLocation CENTER_TEXTURE =
             ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/attribute_manage_texture_bg_2.png");
 
+    private static final ResourceLocation EMPTY =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/empty.png");
 
 
+    private static final ResourceLocation INTELLECT =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/intellect.png");
+    private static final ResourceLocation INTELLECT_BASE =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/intellect_base.png");
+
+    private static final ResourceLocation BODY =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/body.png");
+    private static final ResourceLocation BODY_BASE =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/body_base.png");
+
+    private static final ResourceLocation SOCIETY =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/society.png");
+    private static final ResourceLocation SOCIETY_BASE =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/society_base.png");
+
+
+
+    private static final ResourceLocation SKILL_ACTIVE =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/button/skill_button_accepted_texture.png");
+
+    private static final ResourceLocation SKILL_NOT_ACTIVE =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/button/skill_button_denied_texture.png");
+
+
+
+
+
+    private boolean isOpenTooltipIntellect = false;
+    private boolean isOpenTooltipBody = false;
+    private boolean isOpenTooltipSociety = false;
 
     PlayerSAttrubitesData data;
+    PlayerClassData classData;
     String className;
+
+
 
 
     public UpgradeManageScreen() {
@@ -42,15 +88,21 @@ public class UpgradeManageScreen extends Screen {
         return true;
     }
 
-    @Override
-    protected void init() {
-        assert this.minecraft != null;
-        assert this.minecraft.player != null;
-        assert data != null;
 
-        var classdata = minecraft.player.getData(MyAttachments.PLAYER_CLASS);
-        data = minecraft.player.getData(MyAttachments.PLAYER_SKILLS);
+
+
+    public void refresh() {
+        this.clearWidgets();
+
+        createButtons();
+    }
+
+    private void createButtons() {
+
+        var classdata = this.minecraft.player.getData(ModAttachments.PLAYER_CLASS);
+        data = this.minecraft.player.getData(ModAttachments.PLAYER_SKILLS);
         className = classdata.getPlayerClass();
+        classData = classdata;
 
         this.addRenderableWidget(
                 Button.builder(
@@ -66,6 +118,331 @@ public class UpgradeManageScreen extends Screen {
                         .build()
         );
 
+        this.addRenderableWidget(new ImageButton(
+                this.width / 2 + 10,
+                this.height / 2 + 50,
+                32,
+                32,
+                EMPTY,
+                Component.literal(""),
+                "intellect_upgrades_open",
+                List.of(Component.literal((int) data.getIntellectProgress()+"/100%")),
+                btn -> {
+                    isOpenTooltipSociety = false;
+                    isOpenTooltipBody = false;
+                    isOpenTooltipIntellect = !isOpenTooltipIntellect;
+                    refresh();
+                }));
+
+        this.addRenderableWidget(new ImageButton(
+                this.width / 2 + 50,
+                this.height / 2 + 50,
+                32,
+                32,
+                EMPTY,
+                Component.literal(""),
+                "body_upgrades_open",
+                List.of(Component.literal((int) data.getBodyProgress()+"/100%")),
+                btn -> {
+                    isOpenTooltipIntellect = false;
+                    isOpenTooltipSociety = false;
+                    isOpenTooltipBody = !isOpenTooltipBody;
+                    refresh();
+                }
+                ));
+
+        this.addRenderableWidget(new ImageButton(
+                this.width / 2 + 90,
+                this.height / 2 + 50,
+                32,
+                32,
+                EMPTY,
+                Component.literal(""),
+                "society_upgrades_open",
+                List.of(Component.literal((int) data.getSocietyProgress()+"/100%")),
+                btn -> {
+                    isOpenTooltipIntellect = false;
+                    isOpenTooltipBody = false;
+                    isOpenTooltipSociety = !isOpenTooltipSociety;
+                    refresh();
+                }
+                ));
+
+
+        if (isOpenTooltipIntellect) {
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("УМЕНИЕ"),
+                                    (btn) -> {
+                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 7,
+                                    this.height / 2 + 85,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("ОПЫТ"),
+                                    (btn) -> {
+                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 67,
+                                    this.height / 2 + 85,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("ФЕРМЕРСТВО"),
+                                    (btn) -> {
+                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 7,
+                                    this.height / 2 + 100,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("УДАЧА"),
+                                    (btn) -> {
+                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 67,
+                                    this.height / 2 + 100,
+                                    60,
+                                    15)
+                            .build()
+            );
+        }
+
+        if (isOpenTooltipBody) {
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("ЗДОРОВЬЕ"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 7,
+                                    this.height / 2 + 85,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("СИЛА"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 67,
+                                    this.height / 2 + 85,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("БРОНЯ"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 7,
+                                    this.height / 2 + 100,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("СОПРОТИВЛЕНИЕ"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 67,
+                                    this.height / 2 + 100,
+                                    60,
+                                    15)
+                            .build()
+            );
+        }
+
+        if (isOpenTooltipSociety) {
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("???"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 7,
+                                    this.height / 2 + 85,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("???"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 67,
+                                    this.height / 2 + 85,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("???"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 7,
+                                    this.height / 2 + 100,
+                                    60,
+                                    15)
+                            .build()
+            );
+            this.addRenderableWidget(
+                    Button.builder(
+                                    Component.literal("???"),
+                                    (btn) -> {
+                                        isOpenTooltipBody = !isOpenTooltipBody;
+                                    }
+                            ).bounds(
+                                    this.width / 2 + 67,
+                                    this.height / 2 + 100,
+                                    60,
+                                    15)
+                            .build()
+            );
+
+
+
+
+        }
+
+        ResourceLocation ACTIVE_1_TEXTURE;
+        if (classData.isActive1Enabled()) {
+            ACTIVE_1_TEXTURE = SKILL_ACTIVE;
+        } else {
+            ACTIVE_1_TEXTURE = SKILL_NOT_ACTIVE;
+        }
+
+        ResourceLocation ACTIVE_2_TEXTURE;
+        if (classData.isActive2Enabled()) {
+            ACTIVE_2_TEXTURE = SKILL_ACTIVE;
+        } else {
+            ACTIVE_2_TEXTURE = SKILL_NOT_ACTIVE;
+        }
+
+        ResourceLocation ACTIVE_3_TEXTURE;
+        if (classData.isActive3Enabled()) {
+            ACTIVE_3_TEXTURE = SKILL_ACTIVE;
+        } else {
+            ACTIVE_3_TEXTURE = SKILL_NOT_ACTIVE;
+        }
+
+        ResourceLocation ACTIVE_4_TEXTURE;
+        if (classData.isActive4Enabled()) {
+            ACTIVE_4_TEXTURE = SKILL_ACTIVE;
+        } else {
+            ACTIVE_4_TEXTURE = SKILL_NOT_ACTIVE;
+        }
+
+
+
+        this.addRenderableWidget(new ImageButton(
+                (this.width / 2) - 80, (this.height/2) + 30, 32, 38,
+                ACTIVE_1_TEXTURE,
+                Component.translatable("АКТИВ 1"),
+                "active_1_button",
+                List.of(Component.translatable("tooltip.era_tweaks.active1_"+classData.getPlayerSubClass(),
+                        classData.isActive1Enabled(),
+                        classData.isActive1onCooldown()
+                        )
+                ),
+                btn -> {
+                    Network.toServerAction("", 10);
+                }
+        ));
+
+        this.addRenderableWidget(new ImageButton(
+                (this.width / 2) - 40, (this.height/2) + 30, 32, 38,
+                ACTIVE_2_TEXTURE,
+                Component.translatable("АКТИВ 2"),
+                "active_2_button",
+                List.of(Component.translatable("tooltip.era_tweaks.active2_"+classData.getPlayerSubClass(),
+                                classData.isActive2Enabled(),
+                                classData.isActive2onCooldown()
+                        )
+                ),
+                btn -> {
+                    Network.toServerAction("", 11);
+                }
+        ));
+
+        this.addRenderableWidget(new ImageButton(
+                (this.width / 2) - 80, (this.height/2) + 70, 32, 38,
+                ACTIVE_1_TEXTURE,
+                Component.translatable("АКТИВ 3"),
+                "active_3_button",
+                List.of(Component.translatable("tooltip.era_tweaks.active3_"+classData.getPlayerSubClass(),
+                                classData.isActive3Enabled(),
+                                classData.isActive3onCooldown()
+                        )
+                ),
+                btn -> {
+                    Network.toServerAction("", 14);
+                }
+        ));
+
+        this.addRenderableWidget(new ImageButton(
+                (this.width / 2) - 40, (this.height/2) + 70, 32, 38,
+                ACTIVE_2_TEXTURE,
+                Component.translatable("АКТИВ 4"),
+                "active_4_button",
+                List.of(Component.translatable("tooltip.era_tweaks.active4_"+classData.getPlayerSubClass(),
+                                classData.isActive4Enabled(),
+                                classData.isActive4onCooldown()
+                        )
+                ),
+                btn -> {
+                    Network.toServerAction("", 15);
+                }
+        ));
+
+    }
+
+
+
+    @Override
+    protected void init() {
+        assert this.minecraft != null;
+        assert this.minecraft.player != null;
+        assert data != null;
+
+
+
+
+        createButtons();
+
     }
 
 
@@ -73,7 +450,7 @@ public class UpgradeManageScreen extends Screen {
 
     private void drawCustomBackground(GuiGraphics guiGraphics) {
         int texW = 285;
-        int texH = 206;
+        int texH = 275;
 
         int texX = (this.width - texW) / 2;
         int texY = (this.height - texH) / 2;
@@ -91,319 +468,21 @@ public class UpgradeManageScreen extends Screen {
         assert this.minecraft != null;
         Player player = this.minecraft.player;
         assert player != null;
-
-
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Строительство"),
-                this.width / 2 + 10,
-                this.height / 2 - 45,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Добыча"),
-                this.width / 2 + 10,
-                this.height / 2 - 25,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Создание"),
-                this.width / 2 + 10,
-                this.height / 2 - 5,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Фермерство"),
-                this.width / 2 + 10,
-                this.height / 2 + 15,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Боевое искусство"),
-                this.width / 2 + 10,
-                this.height / 2 + 35,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Магия"),
-                this.width / 2 + 10,
-                this.height / 2 + 55,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal("Выносливость"),
-                this.width / 2 + 10,
-                this.height / 2 + 75,
-                0xFFFFFF
-        );
-
-
-
-
-
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getBuildingLevel()),
-                this.width / 2 + 112,
-                this.height / 2 - 45,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getMiningLevel()),
-                this.width / 2 + 112,
-                this.height / 2 - 25,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getCraftingLevel()),
-                this.width / 2 + 112,
-                this.height / 2 - 5,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getFarmingLevel()),
-                this.width / 2 + 112,
-                this.height / 2 + 15,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getFightLevel()),
-                this.width / 2 + 112,
-                this.height / 2 + 35,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getMagicLevel()),
-                this.width / 2 + 112,
-                this.height / 2 + 55,
-                0xFFFFFF
-        );
-
-        guiGraphics.drawString(
-                this.font,
-                Component.literal(""+data.getStaminaLevel()),
-                this.width / 2 + 112,
-                this.height / 2 + 75,
-                0xFFFFFF
-        );
-
-
-        int barX = (this.width / 2) + 10;
-        int barY = (this.height / 2) - 20;
-        int barWidth = 115;
-        int barHeight = 5;
-
-
-
-        //Строительство
-        guiGraphics.fill(
-                barX,
-                barY-15,
-                barX + barWidth,
-                barY-15 + barHeight,
-                0xFF262626
-        );
-        double progress_build = data.getBuildingProgress();
-        int filled_build = (int)(barWidth * (progress_build / 100.0));
-        if (filled_build > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY-15,
-                    barX + filled_build,
-                    barY-15 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY-15 && mouseY < barY-15+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getBuildingProgress()+"/100%"), mouseX, mouseY);
-        }
-
-        //Добыча
-        guiGraphics.fill(
-                barX,
-                barY+5,
-                barX + barWidth,
-                barY+5 + barHeight,
-                0xFF262626
-        );
-        double progress_mining = data.getMiningProgress();
-        int filled_mining = (int)(barWidth * (progress_mining / 100.0));
-        if (filled_mining > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY+5,
-                    barX + filled_mining,
-                    barY+5 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY+5 && mouseY < barY+5+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getMiningProgress()+"/100%"), mouseX, mouseY);
-        }
-
-        //Создание
-        guiGraphics.fill(
-                barX,
-                barY+25,
-                barX + barWidth,
-                barY+25 + barHeight,
-                0xFF262626
-        );
-        double progress_crafting = data.getCraftingProgress();
-        int filled_crafting = (int)(barWidth * (progress_crafting / 100.0));
-        if (filled_crafting > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY+25,
-                    barX + filled_crafting,
-                    barY+25 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY+25 && mouseY < barY+25+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getCraftingProgress()+"/100%"), mouseX, mouseY);
-        }
-
-        //Фермерство
-        guiGraphics.fill(
-                barX,
-                barY+45,
-                barX + barWidth,
-                barY+45 + barHeight,
-                0xFF262626
-        );
-        double progress_farming = data.getFarmingProgress();
-        int filled_farming = (int)(barWidth * (progress_farming / 100.0));
-        if (filled_farming > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY+45,
-                    barX + filled_farming,
-                    barY+45 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY+45 && mouseY < barY+45+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getFarmingProgress()+"/100%"), mouseX, mouseY);
-        }
-
-        //Боевое искусство
-        guiGraphics.fill(
-                barX,
-                barY+65,
-                barX + barWidth,
-                barY+65 + barHeight,
-                0xFF262626
-        );
-        double progress_fight = data.getFightProgress();
-        int filled_fight = (int)(barWidth * (progress_fight / 100.0));
-        if (filled_fight > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY+65,
-                    barX + filled_fight,
-                    barY+65 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY+65 && mouseY < barY+65+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getFightProgress()+"/100%"), mouseX, mouseY);
-        }
-
-        //Магия
-        guiGraphics.fill(
-                barX,
-                barY+85,
-                barX + barWidth,
-                barY+85 + barHeight,
-                0xFF262626
-        );
-        double progress_magic = data.getMagicProgress();
-        int filled_magic = (int)(barWidth * (progress_magic / 100.0));
-        if (filled_magic > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY+85,
-                    barX + filled_magic,
-                    barY+85 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY+85 && mouseY < barY+85+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getMagicProgress()+"/100%"), mouseX, mouseY);
-        }
-
-        //Выносливость
-        guiGraphics.fill(
-                barX,
-                barY+105,
-                barX + barWidth,
-                barY+105 + barHeight,
-                0xFF262626
-        );
-        double progress_stamina = data.getStaminaProgress();
-        int filled_stamina = (int)(barWidth * (progress_stamina / 100.0));
-        if (filled_stamina > 0) {
-            guiGraphics.fill(
-                    barX,
-                    barY+105,
-                    barX + filled_stamina,
-                    barY+105 + barHeight,
-                    0xFFAA00AA
-            );
-        }
-
-        if (mouseX > barX && mouseX < barX+barWidth && mouseY > barY+105 && mouseY < barY+105+barHeight) {
-            guiGraphics.renderTooltip(font, Component.literal((int) data.getStaminaProgress()+"/100%"), mouseX, mouseY);
-        }
-
-
+        LivingEntity livingEntity = this.minecraft.player;
+        renderEntityFollowMouse(guiGraphics, this.width / 2 + 60, this.height / 2 + 50, 60, mouseX, mouseY, livingEntity);
 
 
 
 
 
         float scale = 2.0f;
-
         int centerX = this.width / 2;
         int centerY = this.height / 2;
-
         float drawX = centerX / scale;
-        float drawY = (centerY - 90) / scale; // минус -  выше центра
+        float drawY = (centerY - 120) / scale; // минус -  выше центра
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, 1.0f);
-
         guiGraphics.drawCenteredString(
                 this.font,
                 Component.translatable("text.era_tweaks."+className+"_class"),
@@ -415,39 +494,150 @@ public class UpgradeManageScreen extends Screen {
         guiGraphics.pose().popPose();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(1.5f, 1.5f, 1.0f);
-
         guiGraphics.drawString(
                 this.font,
                 "Управление",
                 (int) ((centerX - 105) / 1.5f),
-                (int) ((centerY - 62) / 1.5f),
+                (int) ((centerY - 82) / 1.5f),
                 0xFFFFFF
         );
-
         guiGraphics.drawString(
                 this.font,
                 "Атрибуты",
-                (int) ((centerX + 30) / 1.5f),
-                (int) ((centerY - 62) / 1.5f),
+                (int) ((centerX + 35) / 1.5f),
+                (int) ((centerY - 82) / 1.5f),
                 0xFFFFFF
         );
-
         guiGraphics.drawString(
                 this.font,
                 "Показатели",
                 (int) ((centerX - 105) / 1.5f),
-                (int) ((centerY - 7) / 1.5f),
+                (int) ((centerY - 13) / 1.5f),
                 0xFFFFFF
         );
+        guiGraphics.pose().popPose();
+    }
+
+
+
+    private void renderAttributes(GuiGraphics guiGraphics) {
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(1.5f, 1.5f, 1.0f);
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+        guiGraphics.drawCenteredString(
+                this.font,
+                Component.literal(""+data.getIntellectLevel()),
+                (int) ((centerX + 27) / 1.5f),
+                (int) ((centerY + 60)  / 1.5f),
+                0xFFFFFF
+        );
+        guiGraphics.drawCenteredString(
+                this.font,
+                Component.literal(""+data.getBodyLevel()),
+                (int) ((centerX + 66) / 1.5f),
+                (int) ((centerY + 60)  / 1.5f),
+                0xFFFFFF
+        );
+        guiGraphics.drawCenteredString(
+                this.font,
+                Component.literal(""+data.getSocietyLevel()),
+                (int) ((centerX + 108) / 1.5f),
+                (int) ((centerY + 60)  / 1.5f),
+                0xFFFFFF
+        );
+        guiGraphics.pose().popPose();
+
+
+        double percent_intellect = Mth.clamp(data.getIntellectProgress() / 100.0, 0.0, 1.0);
+        int texSize = 32;
+        int topOffsetIntellect = 5;
+        int contentHeightIntellect = 23;
+        int fillIntellect = (int)(contentHeightIntellect * percent_intellect);
+        guiGraphics.blit(
+                INTELLECT_BASE,
+                this.width/2 + 10,
+                this.height/2 + 50,
+                0, 0,
+                texSize, texSize,
+                texSize, texSize
+        );
+        RenderSystem.setShaderColor(0F, 0F, 1F, 1F);
+        guiGraphics.blit(
+                INTELLECT,
+                this.width/2 + 10,
+                this.height/2 + 50 + topOffsetIntellect + (contentHeightIntellect - fillIntellect),
+                0,
+                topOffsetIntellect + (contentHeightIntellect - fillIntellect),
+                texSize,
+                fillIntellect,
+                texSize,
+                texSize
+        );
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+
+
+        double percent_body = Mth.clamp(data.getBodyProgress() / 100.0, 0.0, 1.0);
+        int topOffsetBody = 1;
+        int contentHeightBody = 30;
+        int fillBody = (int)(contentHeightBody * percent_body);
+        guiGraphics.blit(
+                BODY_BASE,
+                this.width/2 + 50,
+                this.height/2 + 50,
+                0, 0,
+                texSize, texSize,
+                texSize, texSize
+        );
+        RenderSystem.setShaderColor(1F, 0F, 0F, 1F);
+        guiGraphics.blit(
+                BODY,
+                this.width/2 + 50,
+                this.height/2 + 50 + topOffsetBody + (contentHeightBody - fillBody),
+                0,
+                topOffsetBody + (contentHeightBody - fillBody),
+                texSize,
+                fillBody,
+                texSize,
+                texSize
+        );
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+
+        double percent_society = Mth.clamp(data.getSocietyProgress() / 100.0, 0.0, 1.0);
+        int topOffsetSociety = 1;
+        int contentHeightSociety = 30;
+        int fillSociety = (int)(contentHeightSociety * percent_society);
+        guiGraphics.blit(
+                SOCIETY_BASE,
+                this.width/2 + 90,
+                this.height/2 + 50,
+                0, 0,
+                texSize, texSize,
+                texSize, texSize
+        );
+        RenderSystem.setShaderColor(0F, 1F, 0F, 1F);
+        guiGraphics.blit(
+                SOCIETY,
+                this.width/2 + 90,
+                this.height/2 + 50 + topOffsetSociety + (contentHeightSociety - fillSociety),
+                0,
+                topOffsetSociety + (contentHeightSociety - fillSociety),
+                texSize,
+                fillSociety,
+                texSize,
+                texSize
+        );
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
         guiGraphics.pose().popPose();
+
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 
 
-        // 1. Ванильный blur и затемнение мира
+        // 1. Ванильный блюр и затемнение мира
         this.renderBackground(guiGraphics, mouseX, mouseY, delta);
 
         // 2. Кастомный фон (сверху над блюром, но под кнопками)
@@ -456,23 +646,76 @@ public class UpgradeManageScreen extends Screen {
         drawCustomBackground(guiGraphics);
         guiGraphics.pose().popPose();
 
-        // 3. Рисуем кнопки
-        // ВНИМАНИЕ: это супер важно — рисовать их ПОСЛЕ фона
+        // 3. Кнопки
         for (Renderable renderable : this.renderables) {
             renderable.render(guiGraphics, mouseX, mouseY, delta);
         }
 
-        // 4. Рисуем остальное содержимое GUI
+        // 4. Остальное содержимое GUI
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 100);
         renderCustomContent(guiGraphics, mouseX, mouseY, delta);
-        guiGraphics.pose().popPose();
-
-
-
+        // 5. Атрибуты
+        renderAttributes(guiGraphics);
 
 
     }
+
+    public static void renderEntityFollowMouse(
+            GuiGraphics guiGraphics,
+            int x,
+            int y,
+            int scale,
+            double mouseX,
+            double mouseY,
+            LivingEntity entity
+    ) {
+        float dx = x - (float) mouseX;
+        float dy = y - (float) mouseY;
+
+        float yaw = (float) Math.atan(dx / 40.0F);
+        float pitch = (float) Math.atan(dy / 40.0F);
+
+        Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
+        Quaternionf cameraOrientation = new Quaternionf()
+                .rotateX(pitch * 20.0F * ((float) Math.PI / 180F));
+
+        pose.mul(cameraOrientation);
+
+        // сохранить старые углы
+        float oldBodyRot = entity.yBodyRot;
+        float oldYRot = entity.getYRot();
+        float oldXRot = entity.getXRot();
+        float oldHeadRot = entity.yHeadRot;
+        float oldHeadRotO = entity.yHeadRotO;
+
+        // ванильная логика
+        entity.yBodyRot = 180.0F + yaw * 20.0F;
+        entity.setYRot(180.0F + yaw * 40.0F);
+        entity.setXRot(-pitch * 20.0F);
+        entity.yHeadRot = entity.getYRot();
+        entity.yHeadRotO = entity.getYRot();
+
+        InventoryScreen.renderEntityInInventory(
+                guiGraphics,
+                x,
+                y,
+                scale,
+                new Vector3f(0, 0, 0),
+                pose,
+                cameraOrientation,
+                entity
+        );
+
+        // вернуть назад
+        entity.yBodyRot = oldBodyRot;
+        entity.setYRot(oldYRot);
+        entity.setXRot(oldXRot);
+        entity.yHeadRot = oldHeadRot;
+        entity.yHeadRotO = oldHeadRotO;
+    }
+
+
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
