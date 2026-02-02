@@ -100,9 +100,9 @@ public class DeniedConfig {
                 if (id == null) continue;
                 JsonObject rule = new JsonObject();
 
-                rule.add("required_attributes", gson.toJsonTree(List.of("fight")));
+                rule.add("required_attributes", gson.toJsonTree(List.of("body")));
                 rule.add("required_levels", gson.toJsonTree(List.of(1)));
-                rule.addProperty("required_skill", "skill1");
+                rule.addProperty("required_skill", "");
 
                 root.add(id.toString(), rule);
             }
