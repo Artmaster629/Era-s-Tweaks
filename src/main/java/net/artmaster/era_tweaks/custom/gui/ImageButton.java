@@ -1,4 +1,4 @@
-package net.artmaster.era_tweaks.api.gui;
+package net.artmaster.era_tweaks.custom.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
