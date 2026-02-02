@@ -2,18 +2,29 @@ package net.artmaster.era_tweaks.network;
 
 import com.alrex.parcool.api.Attributes;
 import net.artmaster.era_tweaks.ModMain;
-
-import net.artmaster.era_tweaks.api.SkillsManager;
-import net.artmaster.era_tweaks.api.container.MyAttachments;
-import net.artmaster.era_tweaks.api.container.PlayerClassData;
-import net.artmaster.era_tweaks.api.container.PlayerSAttrubitesData;
-import net.artmaster.era_tweaks.client.BossbarManager;
+import net.artmaster.era_tweaks.custom.player_classes.assistant.alchemist.Alchemist;
+import net.artmaster.era_tweaks.custom.player_classes.assistant.common_assistant.CommonAssistant;
+import net.artmaster.era_tweaks.custom.player_classes.assistant.smith.Smith;
+import net.artmaster.era_tweaks.custom.player_classes.warrior.bowman.Bowman;
+import net.artmaster.era_tweaks.custom.player_classes.wizard.priest.Priest;
+import net.artmaster.era_tweaks.network.main_packets.ClientActionPacket;
+import net.artmaster.era_tweaks.network.main_packets.ServerActionPacket;
+import net.artmaster.era_tweaks.network.main_packets.DataPacket;
+import net.artmaster.era_tweaks.registry.ModAttachments;
+import net.artmaster.era_tweaks.custom.data.OverlayAttributesData;
+import net.artmaster.era_tweaks.custom.data.PlayerClassData;
+import net.artmaster.era_tweaks.custom.data.PlayerSAttrubitesData;
+import net.artmaster.era_tweaks.custom.player_classes.warrior.scout.custom.ScoutUberData;
+import net.artmaster.era_tweaks.custom.player_classes.warrior.common_warrior.CommonWarrior;
+import net.artmaster.era_tweaks.custom.player_classes.warrior.paladin.Paladin;
+import net.artmaster.era_tweaks.custom.player_classes.warrior.scout.Scout;
 import net.artmaster.era_tweaks.client.ClientPacketHandler;
-import net.artmaster.era_tweaks.utils.ServerScheduler;
+import net.artmaster.era_tweaks.registry.ModAttributes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -26,7 +37,10 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+import java.util.Map;
 import java.util.UUID;
+
+import static net.artmaster.era_tweaks.custom.sattributes.SAttrubitesAdding.addXpProgress;
 
 @Mod("era_tweaks")
 @EventBusSubscriber(modid = ModMain.MODID)
@@ -59,15 +73,10 @@ public class Network {
                 (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleRunCommand(packet))
         );
 
-        registrarClient.playToClient(
-                SyncPlayerSkillsPacket.TYPE,
-                SyncPlayerSkillsPacket.CODEC,
-                (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleSyncPlayerSkills(packet))
-        );
 
         registrarClient.playToClient(
-                SyncPlayerClassPacket.TYPE,
-                SyncPlayerClassPacket.CODEC,
+                DataPacket.TYPE,
+                DataPacket.CODEC,
                 (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleSyncPlayerClass(packet))
         );
 
@@ -76,6 +85,16 @@ public class Network {
                 StaminaPacket.CODEC,
                 (packet, ctx) -> ctx.enqueueWork(() -> ClientPacketHandler.handleStaminaConsume(packet))
         );
+
+        registrarClient.playToClient(
+                ClientActionPacket.TYPE,
+                ClientActionPacket.CODEC,
+                (packet, ctx) -> ctx.enqueueWork(() -> {
+                    ClientPacketHandler.handleClientAction(packet);
+                })
+        );
+
+
 
 
 
@@ -91,12 +110,12 @@ public class Network {
         );
 
         registrarClient.playToServer(
-                SyncPlayerClassToServerPacket.TYPE,
-                SyncPlayerClassToServerPacket.CODEC,
+                ServerActionPacket.TYPE,
+                ServerActionPacket.CODEC,
                 (packet, ctx) -> ctx.enqueueWork(() -> {
                     ServerPlayer player = (ServerPlayer) ctx.player();
 
-                    var data = player.getData(MyAttachments.PLAYER_CLASS);
+                    var data = player.getData(ModAttachments.PLAYER_CLASS);
 
                     if (packet.actionType() == 1) {
                         boolean isIncluded = false;
@@ -110,21 +129,59 @@ public class Network {
 
                         if (!isIncluded) {
                             data.getPlayerSkills().add(packet.key());
+                            data.removeUpgradesPoints(1);
+                            data.setUpgradesPointsProgress(0);
                             syncClasses(player);
-                            SkillsManager.makeChangesToClass(data, player);
+
+                            ChangesApplier.apply(data, player, packet.key());
+//                            if (packet.key().contains("warrior")) {
+//                                CommonWarrior.ApplyChanges.makeChangesToClass(data, player);
+//                            }
+//
+//                            if (packet.key().contains("paladin")) {
+//                                Paladin.ApplyChanges.makeChangesToClass(data, player);
+//                            }
+//
+//                            if (packet.key().contains("alchemist")) {
+//                                Alchemist.ApplyChanges.makeChangesToClass(data, player);
+//                            }
+//
+//                            if (packet.key().contains("scout")) {
+//                                Scout.ApplyChanges.makeChangesToClass(data, player);
+//
+//                            }
+//
+//                            if (packet.key().contains("assistant")) {
+//                                CommonAssistant.ApplyChanges.makeChangesToClass(data, player);
+//                            }
+//
+//                            if (packet.key().contains("smith")) {
+//                                Smith.ApplyChanges.makeChangesToClass(data, player);
+//                            }
+
+
                         }
                     }
                     if (packet.actionType() == 2) {
                         data.changePlayerClass(packet.key());
+                        if (packet.key().equals("warrior")) {
+                            CommonWarrior.ApplyChanges.makeChangesToClass(data, player);
+                        }
+
+                        if (packet.key().equals("wizard")) {
+                            //CommonWizard.ApplyChanges.makeChangesToClass(data, player);
+                        }
+
+                        if (packet.key().equals("assistant")) {
+                            CommonAssistant.ApplyChanges.makeChangesToClass(data, player);
+                        }
                         syncSkills(player);
                         syncClasses(player);
-                        SkillsManager.makeChangesToClass(data, player);
                     }
                     if (packet.actionType() == 3) {
                         data.changePlayerSubClass(packet.key());
                         syncSkills(player);
                         syncClasses(player);
-                        SkillsManager.makeChangesToClass(data, player);
                     }
                     if (packet.actionType() == 4) {
                         player.closeContainer();
@@ -136,20 +193,80 @@ public class Network {
                         player.displayClientMessage(Component.translatable(packet.key()), false);
                     }
                     if (packet.actionType() == 7) {
-                        player.displayClientMessage(Component.literal(packet.key()), false);
+                        player.displayClientMessage(Component.literal(packet.key()), true);
                     }
                     if (packet.actionType() == 8) {
                         player.setJumping(false);
                     }
+                    if (packet.actionType() == 9) {
+                        syncSkills(player);
+                        syncClasses(player);
+                    }
+
+                    if (packet.actionType() == 10) {
+                        if (packet.key().equals("active1")) {
+                            boolean value = !data.isActive1Enabled();
+                            data.setActive1(value);
+                            System.out.println("Toggled to " + value);
+                            syncClasses(player);
+
+
+
+                            ///Кастомные ивенты по кнопкам
+                            if (player.level() instanceof ServerLevel level) {
+                                if (data.getPlayerSkills().contains("priest_skill_1") && data.isActive1Enabled() && !data.isActive1onCooldown()) {
+                                    Priest.Actions.onPriestSkill1_And_4(player, level, data);
+                                }
+                            }
+                            if (data.getPlayerSkills().contains("alchemist_skill_3")) {
+                                if (data.isActive1Enabled() && !data.isActive1onCooldown()) {
+                                    Alchemist.Actions.onAlchemistSkill3(player, data);
+                                }
+                            }
+                        }
+                        if (packet.key().equals("active2")) {
+                            boolean value = !data.isActive2Enabled();
+                            data.setActive2(value);
+                            System.out.println("Toggled to " + value);
+                            syncClasses(player);
+
+                            ///Кастомные ивенты по кнопкам
+                            if (player.level() instanceof ServerLevel level) {
+                                if (data.getPlayerSkills().contains("priest_skill_2") && data.isActive2Enabled()) {
+                                    Priest.Actions.onPriestSkill2(player, level);
+                                }
+                            }
+                        }
+
+                        if (packet.key().equals("active3")) {
+                            boolean value = !data.isActive3Enabled();
+                            data.setActive3(value);
+                            System.out.println("Toggled to " + value);
+                            syncClasses(player);
+                        }
+
+                        if (packet.key().equals("active4")) {
+                            boolean value = !data.isActive4Enabled();
+                            data.setActive4(value);
+                            System.out.println("Toggled to " + value);
+
+                            ///Кастомные ивенты по кнопкам
+                            if (player.level() instanceof ServerLevel level) {
+                                if (data.getPlayerSkills().contains("priest_skill_5_1") && data.isActive4Enabled() && !data.isActive4onCooldown()) {
+                                    Priest.Actions.onPriestSkill5_1(player, level, data);
+                                }
+                            }
+                        }
 
 
 
 
+                        syncClasses(player);
+                    }
 
-
-
-
-
+                    if (packet.actionType() == 12) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60));
+                    }
 
                 })
         );
@@ -159,19 +276,28 @@ public class Network {
                 StaminaDataPacket.CODEC,
                 (packet, ctx) -> ctx.enqueueWork(() -> {
                     ServerPlayer player = (ServerPlayer) ctx.player();
-                    PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
-                    if (data.getStaminaLevel() < 100) {
-                        data.setStaminaProgress(data.getStaminaProgress()+packet.stamina());
-                        BossbarManager.updateBossbar(player, data.getStaminaProgress(), data.getStaminaProgress()+packet.stamina(), "stamina");
-                        ServerScheduler.schedule(60, () -> {
-                            BossbarManager.removeBossbar(player);
-                        });
+                    PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
+
+
+                    double base_multiplier = packet.stamina();
+                    double attribute = player.getAttributeValue(ModAttributes.UPGRADE_POINT_XP);
+
+                    double multiplier = (1.0 + (attribute/100)) * base_multiplier;
+
+                    if (data.getBodyLevel() < 50) {
+                        data.setBodyProgress(data.getBodyProgress()+multiplier);
+                        var overlayData = player.getData(ModAttachments.OVERLAYS_DATA);
+                        overlayData.setSendGUIType(2);
+                        overlayData.setProgress(multiplier);
+                        overlayData.setCommonProgress(data.getBodyProgress());
+                        overlayData.setHideTicks(120);
+                        syncWithOverlay(player);
                     }
-                    if (data.getStaminaProgress() >= 100) {
-                        data.setStaminaProgress(0);
-                        data.setStaminaLevel(data.getStaminaLevel()+1);
-                        int oldLevel = data.getStaminaLevel()-1;
-                        player.displayClientMessage(Component.literal("Ваш уровень повысился с "+oldLevel+" на "+data.getStaminaLevel()), false);
+                    if (data.getBodyProgress() >= 100) {
+                        data.setBodyProgress(0);
+                        data.setBodyLevel(data.getBodyLevel()+1);
+                        int oldLevel = data.getBodyLevel()-1;
+                        Network.toClientAction(player, "Ваш уровень Тела повышен с "+oldLevel+" на "+data.getBodyLevel(), 2);
                         AttributeInstance maxStamina = player.getAttribute(Attributes.MAX_STAMINA);
                         AttributeModifier modifier1 = new AttributeModifier(
                                 ResourceLocation.fromNamespaceAndPath("era_tweaks", String.valueOf(UUID.randomUUID())),
@@ -187,14 +313,7 @@ public class Network {
                         );
                         maxStamina.addPermanentModifier(modifier1);
                         staminaRecovery.addPermanentModifier(modifier2);
-                        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-                        if (classdata.getUpgradesPointsProgress() < 4) {
-                            classdata.addUpgradesPointsProgress(1);
-                        } else {
-                            classdata.setUpgradesPointsProgress(0);
-                            classdata.addUpgradesPoints(1);
-                            Network.serverDataAction("Вы получили очко прокачки!", 7);
-                        }
+                        addXpProgress(player);
                     }
                     syncSkills(player);
                     syncClasses(player);
@@ -209,22 +328,20 @@ public class Network {
 
 
 
+    ///Отправка действия из-под сервера на клиент (сервер -> клиент)
+    public static void toClientAction(ServerPlayer player, String key, int actionType) {
+        PacketDistributor.sendToPlayer(player, new ClientActionPacket(key, actionType));
+    }
 
 
-
-    ////ДЕЙСТВИЯ С НАВЫКАМИ ИЗ-ПОД КЛИЕНТА////
-    // Отправка действия из-под клиента на сервер (клиент -> сервер)
-    public static void serverDataAction(String key, int actionType) {
-        Minecraft.getInstance().getConnection().send(new SyncPlayerClassToServerPacket(key, actionType));
+    ///Отправка действия из-под клиента на сервер (клиент -> сервер)
+    public static void toServerAction(String key, int actionType) {
+        Minecraft.getInstance().getConnection().send(new ServerActionPacket(key, actionType));
     }
 
     // Отправка GUI (сервер -> клиент)
     public static void sendOpenGui(ServerPlayer player, String resourceId) {
         player.connection.send(new OpenGuiPacket(resourceId));
-    }
-
-    public static void sendCommand(String command) {
-            Minecraft.getInstance().getConnection().send(new RunCommandPacket(command));
     }
 
 
@@ -240,17 +357,44 @@ public class Network {
 
 
     public static void syncSkills(ServerPlayer player) {
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+
+
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         CompoundTag tag = PlayerSAttrubitesData.save(data);
 
-        PacketDistributor.sendToPlayer(player, new SyncPlayerSkillsPacket(tag));
+        PacketDistributor.sendToPlayer(player, new DataPacket(tag, 1)); // 1 - атрибуты
     }
+
+
     public static void syncClasses(ServerPlayer player) {
-        PlayerClassData data = player.getData(MyAttachments.PLAYER_CLASS);
+        PlayerClassData data = player.getData(ModAttachments.PLAYER_CLASS);
         CompoundTag tag = PlayerClassData.save(data);
 
-        PacketDistributor.sendToPlayer(player, new SyncPlayerClassPacket(tag));
+        PacketDistributor.sendToPlayer(player, new DataPacket(tag, 2)); // 2 - класс
     }
+
+    public static void syncWithOverlay(ServerPlayer player) {
+        OverlayAttributesData data = player.getData(ModAttachments.OVERLAYS_DATA);
+        CompoundTag tag = OverlayAttributesData.save(data);
+
+        PacketDistributor.sendToPlayer(player, new DataPacket(tag, 3)); // 3 - оверлей
+    }
+
+    public static void syncUberWithOverlay(ServerPlayer player) {
+        ScoutUberData data = player.getData(ModAttachments.UBER);
+        CompoundTag tag = ScoutUberData.save(data);
+
+        PacketDistributor.sendToPlayer(player, new DataPacket(tag, 4)); // 4 - убер
+    }
+
+    // 1 - атрибуты
+    // 2 - класс
+    // 3 - оверлей
+    // 4 - убер
+
+
+
+
 
 
 
