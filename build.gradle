@@ -146,8 +146,8 @@ configurations {
 dependencies {
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
+    // compileOnly "mezz.jei:jei-${mc_version}-common-custom:${jei_version}"
+    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-custom:${jei_version}"
     // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
     // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
     //modImplementation "com.bluspring:modernnetworking-neoforge:1.0.1+1.21.1-neoforge"
@@ -193,14 +193,14 @@ dependencies {
     // This is the shared library for both modloaders. I recommend adding this for having sources data,
     // even if you do not use a multiloader setup.
     //modImplementation("xyz.bluspring.modernnetworking:modernnetworking-common:1.2.0+1.21.1")
-    //implementation "curse.maven:open-parties-and-claims-636608:6859716"
+    implementation "curse.maven:open-parties-and-claims-636608:6859716"
     //world map
-    //implementation "curse.maven:open-parties-and-claims-317780:6778114"
+    implementation "curse.maven:open-parties-and-claims-317780:6778114"
     //minimap
-    //implementation "curse.maven:open-parties-and-claims-263420:6778051"
+    implementation "curse.maven:open-parties-and-claims-263420:6778051"
 
     //parcool
-    implementation "curse.maven:parcool-482378:6940391"
+    implementation "curse.maven:parcool-482378:7445369"
 0
     //irons_spellbooks
     implementation "curse.maven:irons_spellbooks-855414:7262331"
@@ -222,8 +222,13 @@ dependencies {
 
     implementation "curse.maven:curios-309927:6529130"
 
+    ////player_revive
+    implementation "curse.maven:player_revive-266890:7454042"
+    implementation "curse.maven:creative_core-257814:7535729"
 
-    compileOnly "net.luckperms:api:5.4"
+
+    compileOnly "net.luckperms:custom:5.4"
+    implementation "curse.maven:luckperms-431733:5654231"
 
 
 }
