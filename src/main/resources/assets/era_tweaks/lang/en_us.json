@@ -19,13 +19,11 @@
 
   "text.era_tweaks.unknown_subclass": "Pi...",
 
-  "sattribute.era_tweaks.building": "Building",
-  "sattribute.era_tweaks.mining": "Mining",
-  "sattribute.era_tweaks.farming": "Farming",
-  "sattribute.era_tweaks.fight": "Fight",
-  "sattribute.era_tweaks.stamina": "Stamina",
-  "sattribute.era_tweaks.crafting": "Crafting",
-  "sattribute.era_tweaks.magic": "Magic",
+  "sattribute.era_tweaks.intellect": "Intellect",
+  "sattribute.era_tweaks.body": "Body",
+  "sattribute.era_tweaks.society": "Society",
+
+  "attributes.era_tweaks.upgrade_point_xp": "Upgrade XP Factor",
 
 
   "text.era_tweaks.skill": "Skill",
@@ -49,6 +47,9 @@
   "key.era_tweaks.open_upgrade_screen": "Open Attribute Upgrades Menu",
 
   "text.era_tweaks.another_class": "Being %s, you cannot learn the %s's skills!",
+
+  "text.era_tweaks.class": "Class",
+  "text.era_tweaks.subclass": "Subclass",
 
 
 
