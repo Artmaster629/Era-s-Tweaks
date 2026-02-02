@@ -5,6 +5,16 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "mixins.era_tweaks.refmap.json",
   "mixins": [
-    "client.StaminaProgressMixin"
+    "server.BowSpeedMixin",
+    "server.CauldronMixin",
+    "server.CraftingMenuMixin",
+    "server.CrossbowSpeedMixin",
+    "server.NecromancerRevivesMixin",
+    "server.ServerPlayerMixin",
+    "server.SpeedRevivesMixin",
+    "server.brewing.BrewingStandBEPlayerMixin",
+    "server.brewing.BrewingStandMenuPlayerMixin",
+    "server.opac.ClaimChangeOwnerMixin",
+    "server.opac.ClaimLimitMixin"
   ]
 }
