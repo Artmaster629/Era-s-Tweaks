@@ -22,6 +22,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @OnlyIn(Dist.CLIENT)
 public class UpgradeManageScreen extends Screen {
@@ -57,10 +58,13 @@ public class UpgradeManageScreen extends Screen {
 
 
     private static final ResourceLocation SKILL_ACTIVE =
-            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/button/skill_button_accepted_texture.png");
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/actives_icons/active_enabled.png");
 
     private static final ResourceLocation SKILL_NOT_ACTIVE =
-            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/button/skill_button_denied_texture.png");
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/actives_icons/active_disabled.png");
+
+    private static final ResourceLocation SKILL_ON_COOLDOWN =
+            ResourceLocation.fromNamespaceAndPath("era_tweaks", "textures/gui/actives_icons/active_on_cooldown.png");
 
 
 
@@ -82,7 +86,7 @@ public class UpgradeManageScreen extends Screen {
     }
 
     public boolean isPauseScreen() {
-        return true;
+        return false;
     }
     public boolean shouldCloseOnEsc() {
         return true;
@@ -93,11 +97,180 @@ public class UpgradeManageScreen extends Screen {
 
     public void refresh() {
         this.clearWidgets();
-
-        createButtons();
+        this.init();
     }
 
     private void createButtons() {
+
+        //        if (isOpenTooltipIntellect) {
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("УМЕНИЕ"),
+//                                    (btn) -> {
+//                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 7,
+//                                    this.height / 2 + 85,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("ОПЫТ"),
+//                                    (btn) -> {
+//                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 67,
+//                                    this.height / 2 + 85,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("ФЕРМЕРСТВО"),
+//                                    (btn) -> {
+//                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 7,
+//                                    this.height / 2 + 100,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("УДАЧА"),
+//                                    (btn) -> {
+//                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 67,
+//                                    this.height / 2 + 100,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//        }
+//
+//        if (isOpenTooltipBody) {
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("ЗДОРОВЬЕ"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 7,
+//                                    this.height / 2 + 85,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("СИЛА"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 67,
+//                                    this.height / 2 + 85,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("БРОНЯ"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 7,
+//                                    this.height / 2 + 100,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("СОПРОТИВЛЕНИЕ"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 67,
+//                                    this.height / 2 + 100,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//        }
+//
+//        if (isOpenTooltipSociety) {
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("???"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 7,
+//                                    this.height / 2 + 85,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("???"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 67,
+//                                    this.height / 2 + 85,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("???"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 7,
+//                                    this.height / 2 + 100,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//            this.addRenderableWidget(
+//                    Button.builder(
+//                                    Component.literal("???"),
+//                                    (btn) -> {
+//                                        isOpenTooltipBody = !isOpenTooltipBody;
+//                                    }
+//                            ).bounds(
+//                                    this.width / 2 + 67,
+//                                    this.height / 2 + 100,
+//                                    60,
+//                                    15)
+//                            .build()
+//            );
+//
+//
+//
+//
+//        }
+
 
         var classdata = this.minecraft.player.getData(ModAttachments.PLAYER_CLASS);
         data = this.minecraft.player.getData(ModAttachments.PLAYER_SKILLS);
@@ -111,16 +284,16 @@ public class UpgradeManageScreen extends Screen {
                                     this.minecraft.setScreen(new ClassManageScreen());
                                 }
                         ).bounds(
-                                this.width / 2 - 120,
-                                this.height / 2 - 50,
-                                100,
-                                20)
+                                this.width / 2 - 72,
+                                this.height / 2 - 77,
+                                40,
+                                12)
                         .build()
         );
 
         this.addRenderableWidget(new ImageButton(
-                this.width / 2 + 10,
-                this.height / 2 + 50,
+                this.width / 2 - 70,
+                this.height / 2 + 85,
                 32,
                 32,
                 EMPTY,
@@ -135,8 +308,8 @@ public class UpgradeManageScreen extends Screen {
                 }));
 
         this.addRenderableWidget(new ImageButton(
-                this.width / 2 + 50,
-                this.height / 2 + 50,
+                this.width / 2 - 15,
+                this.height / 2 + 85,
                 32,
                 32,
                 EMPTY,
@@ -152,8 +325,8 @@ public class UpgradeManageScreen extends Screen {
                 ));
 
         this.addRenderableWidget(new ImageButton(
-                this.width / 2 + 90,
-                this.height / 2 + 50,
+                this.width / 2 + 40,
+                this.height / 2 + 85,
                 32,
                 32,
                 EMPTY,
@@ -169,207 +342,32 @@ public class UpgradeManageScreen extends Screen {
                 ));
 
 
-        if (isOpenTooltipIntellect) {
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("УМЕНИЕ"),
-                                    (btn) -> {
-                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 7,
-                                    this.height / 2 + 85,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("ОПЫТ"),
-                                    (btn) -> {
-                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 67,
-                                    this.height / 2 + 85,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("ФЕРМЕРСТВО"),
-                                    (btn) -> {
-                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 7,
-                                    this.height / 2 + 100,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("УДАЧА"),
-                                    (btn) -> {
-                                        isOpenTooltipIntellect = !isOpenTooltipIntellect;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 67,
-                                    this.height / 2 + 100,
-                                    60,
-                                    15)
-                            .build()
-            );
-        }
-
-        if (isOpenTooltipBody) {
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("ЗДОРОВЬЕ"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 7,
-                                    this.height / 2 + 85,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("СИЛА"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 67,
-                                    this.height / 2 + 85,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("БРОНЯ"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 7,
-                                    this.height / 2 + 100,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("СОПРОТИВЛЕНИЕ"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 67,
-                                    this.height / 2 + 100,
-                                    60,
-                                    15)
-                            .build()
-            );
-        }
-
-        if (isOpenTooltipSociety) {
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("???"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 7,
-                                    this.height / 2 + 85,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("???"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 67,
-                                    this.height / 2 + 85,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("???"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 7,
-                                    this.height / 2 + 100,
-                                    60,
-                                    15)
-                            .build()
-            );
-            this.addRenderableWidget(
-                    Button.builder(
-                                    Component.literal("???"),
-                                    (btn) -> {
-                                        isOpenTooltipBody = !isOpenTooltipBody;
-                                    }
-                            ).bounds(
-                                    this.width / 2 + 67,
-                                    this.height / 2 + 100,
-                                    60,
-                                    15)
-                            .build()
-            );
 
 
+        ResourceLocation ACTIVE_1_TEXTURE =
+                classData.isActive1onCooldown() ? SKILL_ON_COOLDOWN :
+                        classData.isActive1Enabled()    ? SKILL_ACTIVE :
+                                SKILL_NOT_ACTIVE;
 
+        ResourceLocation ACTIVE_2_TEXTURE =
+                classData.isActive2onCooldown() ? SKILL_ON_COOLDOWN :
+                        classData.isActive2Enabled()    ? SKILL_ACTIVE :
+                                SKILL_NOT_ACTIVE;
 
-        }
+        ResourceLocation ACTIVE_3_TEXTURE =
+                classData.isActive3onCooldown() ? SKILL_ON_COOLDOWN :
+                        classData.isActive3Enabled()    ? SKILL_ACTIVE :
+                                SKILL_NOT_ACTIVE;
 
-        ResourceLocation ACTIVE_1_TEXTURE;
-        if (classData.isActive1Enabled()) {
-            ACTIVE_1_TEXTURE = SKILL_ACTIVE;
-        } else {
-            ACTIVE_1_TEXTURE = SKILL_NOT_ACTIVE;
-        }
-
-        ResourceLocation ACTIVE_2_TEXTURE;
-        if (classData.isActive2Enabled()) {
-            ACTIVE_2_TEXTURE = SKILL_ACTIVE;
-        } else {
-            ACTIVE_2_TEXTURE = SKILL_NOT_ACTIVE;
-        }
-
-        ResourceLocation ACTIVE_3_TEXTURE;
-        if (classData.isActive3Enabled()) {
-            ACTIVE_3_TEXTURE = SKILL_ACTIVE;
-        } else {
-            ACTIVE_3_TEXTURE = SKILL_NOT_ACTIVE;
-        }
-
-        ResourceLocation ACTIVE_4_TEXTURE;
-        if (classData.isActive4Enabled()) {
-            ACTIVE_4_TEXTURE = SKILL_ACTIVE;
-        } else {
-            ACTIVE_4_TEXTURE = SKILL_NOT_ACTIVE;
-        }
+        ResourceLocation ACTIVE_4_TEXTURE =
+                classData.isActive4onCooldown() ? SKILL_ON_COOLDOWN :
+                        classData.isActive4Enabled()    ? SKILL_ACTIVE :
+                                SKILL_NOT_ACTIVE;
 
 
 
         this.addRenderableWidget(new ImageButton(
-                (this.width / 2) - 80, (this.height/2) + 30, 32, 38,
+                (this.width / 2) - 108, (this.height/2) - 43, 52, 52,
                 ACTIVE_1_TEXTURE,
                 Component.translatable("АКТИВ 1"),
                 "active_1_button",
@@ -379,12 +377,13 @@ public class UpgradeManageScreen extends Screen {
                         )
                 ),
                 btn -> {
-                    Network.toServerAction("", 10);
+                    Network.toServerAction("active1", 10);
+                    //refresh();
                 }
         ));
 
         this.addRenderableWidget(new ImageButton(
-                (this.width / 2) - 40, (this.height/2) + 30, 32, 38,
+                (this.width / 2) - 108, (this.height/2) + 12, 52, 52,
                 ACTIVE_2_TEXTURE,
                 Component.translatable("АКТИВ 2"),
                 "active_2_button",
@@ -394,13 +393,14 @@ public class UpgradeManageScreen extends Screen {
                         )
                 ),
                 btn -> {
-                    Network.toServerAction("", 11);
+                    Network.toServerAction("active2", 10);
+                    //refresh();
                 }
         ));
 
         this.addRenderableWidget(new ImageButton(
-                (this.width / 2) - 80, (this.height/2) + 70, 32, 38,
-                ACTIVE_1_TEXTURE,
+                (this.width / 2) + 55, (this.height/2) - 43, 52, 52,
+                ACTIVE_3_TEXTURE,
                 Component.translatable("АКТИВ 3"),
                 "active_3_button",
                 List.of(Component.translatable("tooltip.era_tweaks.active3_"+classData.getPlayerSubClass(),
@@ -409,13 +409,14 @@ public class UpgradeManageScreen extends Screen {
                         )
                 ),
                 btn -> {
-                    Network.toServerAction("", 14);
+                    Network.toServerAction("active3", 10);
+                    //refresh();
                 }
         ));
 
         this.addRenderableWidget(new ImageButton(
-                (this.width / 2) - 40, (this.height/2) + 70, 32, 38,
-                ACTIVE_2_TEXTURE,
+                (this.width / 2) + 55, (this.height/2) + 12, 52, 52,
+                ACTIVE_4_TEXTURE,
                 Component.translatable("АКТИВ 4"),
                 "active_4_button",
                 List.of(Component.translatable("tooltip.era_tweaks.active4_"+classData.getPlayerSubClass(),
@@ -424,7 +425,8 @@ public class UpgradeManageScreen extends Screen {
                         )
                 ),
                 btn -> {
-                    Network.toServerAction("", 15);
+                    Network.toServerAction("active4", 10);
+                    //refresh();
                 }
         ));
 
@@ -449,8 +451,8 @@ public class UpgradeManageScreen extends Screen {
 
 
     private void drawCustomBackground(GuiGraphics guiGraphics) {
-        int texW = 285;
-        int texH = 275;
+        int texW = 215;
+        int texH = 261;
 
         int texX = (this.width - texW) / 2;
         int texY = (this.height - texH) / 2;
@@ -469,7 +471,7 @@ public class UpgradeManageScreen extends Screen {
         Player player = this.minecraft.player;
         assert player != null;
         LivingEntity livingEntity = this.minecraft.player;
-        renderEntityFollowMouse(guiGraphics, this.width / 2 + 60, this.height / 2 + 50, 60, mouseX, mouseY, livingEntity);
+        renderEntityFollowMouse(guiGraphics, this.width / 2, this.height / 2 + 70, 60, mouseX, mouseY, livingEntity);
 
 
 
@@ -491,28 +493,17 @@ public class UpgradeManageScreen extends Screen {
                 0xFFFFFF
         );
 
+
+
         guiGraphics.pose().popPose();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(1.5f, 1.5f, 1.0f);
-        guiGraphics.drawString(
+
+        guiGraphics.drawCenteredString(
                 this.font,
-                "Управление",
-                (int) ((centerX - 105) / 1.5f),
-                (int) ((centerY - 82) / 1.5f),
-                0xFFFFFF
-        );
-        guiGraphics.drawString(
-                this.font,
-                "Атрибуты",
-                (int) ((centerX + 35) / 1.5f),
-                (int) ((centerY - 82) / 1.5f),
-                0xFFFFFF
-        );
-        guiGraphics.drawString(
-                this.font,
-                "Показатели",
-                (int) ((centerX - 105) / 1.5f),
-                (int) ((centerY - 13) / 1.5f),
+                Component.translatable("text.era_tweaks."+classData.getPlayerSubClass()+"_subclass"),
+                (int) ((centerX) / 1.5f),
+                (int) ((centerY-100) /1.5f),
                 0xFFFFFF
         );
         guiGraphics.pose().popPose();
@@ -525,25 +516,28 @@ public class UpgradeManageScreen extends Screen {
         guiGraphics.pose().scale(1.5f, 1.5f, 1.0f);
         int centerX = this.width / 2;
         int centerY = this.height / 2;
+
+
+
         guiGraphics.drawCenteredString(
                 this.font,
                 Component.literal(""+data.getIntellectLevel()),
-                (int) ((centerX + 27) / 1.5f),
-                (int) ((centerY + 60)  / 1.5f),
+                (int) ((centerX - 54) / 1.5f), //разница -16
+                (int) ((centerY + 95)  / 1.5f), //разница 10
                 0xFFFFFF
         );
         guiGraphics.drawCenteredString(
                 this.font,
                 Component.literal(""+data.getBodyLevel()),
-                (int) ((centerX + 66) / 1.5f),
-                (int) ((centerY + 60)  / 1.5f),
+                (int) ((centerX + 1) / 1.5f),
+                (int) ((centerY + 95)  / 1.5f),
                 0xFFFFFF
         );
         guiGraphics.drawCenteredString(
                 this.font,
                 Component.literal(""+data.getSocietyLevel()),
-                (int) ((centerX + 108) / 1.5f),
-                (int) ((centerY + 60)  / 1.5f),
+                (int) ((centerX + 56) / 1.5f),
+                (int) ((centerY + 95)  / 1.5f),
                 0xFFFFFF
         );
         guiGraphics.pose().popPose();
@@ -556,8 +550,8 @@ public class UpgradeManageScreen extends Screen {
         int fillIntellect = (int)(contentHeightIntellect * percent_intellect);
         guiGraphics.blit(
                 INTELLECT_BASE,
-                this.width/2 + 10,
-                this.height/2 + 50,
+                this.width/2 - 70,
+                this.height/2 + 85,
                 0, 0,
                 texSize, texSize,
                 texSize, texSize
@@ -565,8 +559,8 @@ public class UpgradeManageScreen extends Screen {
         RenderSystem.setShaderColor(0F, 0F, 1F, 1F);
         guiGraphics.blit(
                 INTELLECT,
-                this.width/2 + 10,
-                this.height/2 + 50 + topOffsetIntellect + (contentHeightIntellect - fillIntellect),
+                this.width/2 - 70,
+                this.height/2 + 85 + topOffsetIntellect + (contentHeightIntellect - fillIntellect),
                 0,
                 topOffsetIntellect + (contentHeightIntellect - fillIntellect),
                 texSize,
@@ -583,8 +577,8 @@ public class UpgradeManageScreen extends Screen {
         int fillBody = (int)(contentHeightBody * percent_body);
         guiGraphics.blit(
                 BODY_BASE,
-                this.width/2 + 50,
-                this.height/2 + 50,
+                this.width/2 - 15,
+                this.height/2 + 85,
                 0, 0,
                 texSize, texSize,
                 texSize, texSize
@@ -592,8 +586,8 @@ public class UpgradeManageScreen extends Screen {
         RenderSystem.setShaderColor(1F, 0F, 0F, 1F);
         guiGraphics.blit(
                 BODY,
-                this.width/2 + 50,
-                this.height/2 + 50 + topOffsetBody + (contentHeightBody - fillBody),
+                this.width/2 - 15,
+                this.height/2 + 85 + topOffsetBody + (contentHeightBody - fillBody),
                 0,
                 topOffsetBody + (contentHeightBody - fillBody),
                 texSize,
@@ -609,8 +603,8 @@ public class UpgradeManageScreen extends Screen {
         int fillSociety = (int)(contentHeightSociety * percent_society);
         guiGraphics.blit(
                 SOCIETY_BASE,
-                this.width/2 + 90,
-                this.height/2 + 50,
+                this.width/2 + 40,
+                this.height/2 + 85,
                 0, 0,
                 texSize, texSize,
                 texSize, texSize
@@ -618,8 +612,8 @@ public class UpgradeManageScreen extends Screen {
         RenderSystem.setShaderColor(0F, 1F, 0F, 1F);
         guiGraphics.blit(
                 SOCIETY,
-                this.width/2 + 90,
-                this.height/2 + 50 + topOffsetSociety + (contentHeightSociety - fillSociety),
+                this.width/2 + 40,
+                this.height/2 + 85 + topOffsetSociety + (contentHeightSociety - fillSociety),
                 0,
                 topOffsetSociety + (contentHeightSociety - fillSociety),
                 texSize,
