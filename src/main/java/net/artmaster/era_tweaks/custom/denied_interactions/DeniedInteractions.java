@@ -1,9 +1,9 @@
-package net.artmaster.era_tweaks.api.event;
+package net.artmaster.era_tweaks.custom.denied_interactions;
 
 import io.redspace.ironsspellbooks.api.events.SpellPreCastEvent;
 import net.artmaster.era_tweaks.ModMain;
-import net.artmaster.era_tweaks.api.container.MyAttachments;
-import net.artmaster.era_tweaks.api.container.PlayerSAttrubitesData;
+import net.artmaster.era_tweaks.registry.ModAttachments;
+import net.artmaster.era_tweaks.custom.data.PlayerSAttrubitesData;
 import net.artmaster.era_tweaks.config.DeniedConfig;
 import net.artmaster.era_tweaks.network.Network;
 import net.minecraft.core.BlockPos;
@@ -40,15 +40,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -66,12 +62,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setCanceled(true);
-            return;
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
+            }
         }
 
 
@@ -93,15 +89,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -120,11 +112,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setCanceled(true);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
+            }
         }
 
     }
@@ -146,15 +139,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -169,6 +158,15 @@ public class DeniedInteractions {
                 //Network.serverDataAction("Вы не можете использовать этот блок, так как он требует " + requiredLevel + " " + attr + ", у вас только " + playerLevel, 7);
                 event.setCanceled(true);
                 return;
+            }
+        }
+
+        String requiredSkill = rule.requiredSkill();
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
             }
         }
     }
@@ -193,15 +191,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -216,6 +210,14 @@ public class DeniedInteractions {
                 //Network.serverDataAction("Вы не можете использовать этот блок, так как он требует " + requiredLevel + " " + attr + ", у вас только " + playerLevel, 7);
                 event.setCanceled(true);
                 return;
+            }
+        }
+        String requiredSkill = rule.requiredSkill();
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
             }
         }
 
@@ -239,15 +241,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -266,11 +264,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setCanceled(true);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -294,15 +293,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -321,11 +316,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setCanceled(true);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -347,15 +343,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -374,11 +366,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setEquipResult(TriState.FALSE);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setEquipResult(TriState.FALSE);
+            }
         }
 
 
@@ -405,15 +398,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -442,20 +431,21 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            var item1 = event.getTo().copy();
-            player.drop(item1, true);
-            if (player.getInventory().getItem(36).getItem().equals(item)) {
-                player.getInventory().getItem(36).setCount(0);
-            } else if (player.getInventory().getItem(37).getItem().equals(item)) {
-                player.getInventory().getItem(37).setCount(0);
-            } else if (player.getInventory().getItem(38).getItem().equals(item)) {
-                player.getInventory().getItem(38).setCount(0);
-            } else if (player.getInventory().getItem(39).getItem().equals(item)) {
-                player.getInventory().getItem(39).setCount(0);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                var item1 = event.getTo().copy();
+                player.drop(item1, true);
+                if (player.getInventory().getItem(36).getItem().equals(item)) {
+                    player.getInventory().getItem(36).setCount(0);
+                } else if (player.getInventory().getItem(37).getItem().equals(item)) {
+                    player.getInventory().getItem(37).setCount(0);
+                } else if (player.getInventory().getItem(38).getItem().equals(item)) {
+                    player.getInventory().getItem(38).setCount(0);
+                } else if (player.getInventory().getItem(39).getItem().equals(item)) {
+                    player.getInventory().getItem(39).setCount(0);
+                }
             }
         }
     }
@@ -472,15 +462,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -499,11 +485,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            player.closeContainer();
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                player.closeContainer();
+            }
         }
     }
 
@@ -524,15 +511,11 @@ public class DeniedInteractions {
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -551,11 +534,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setCanceled(true);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
+            }
         }
 
 
@@ -572,19 +556,14 @@ public class DeniedInteractions {
         if (rule == null) return; // нет запрета
 
 
-        System.out.println(spellId);
 
         Network.syncSkills(player);
         Network.syncClasses(player);
-        PlayerSAttrubitesData data = player.getData(MyAttachments.PLAYER_SKILLS);
+        PlayerSAttrubitesData data = player.getData(ModAttachments.PLAYER_SKILLS);
         Map<String, Integer> playerLevels = Map.of(
-                "fight", data.getFightLevel(),
-                "magic", data.getMagicLevel(),
-                "crafting", data.getCraftingLevel(),
-                "building", data.getBuildingLevel(),
-                "mining", data.getMiningLevel(),
-                "stamina", data.getStaminaLevel(),
-                "farming", data.getFarmingLevel()
+                "intellect", data.getIntellectLevel(),
+                "body", data.getBodyLevel(),
+                "society", data.getSocietyLevel()
         );
 
         List<String> attrs = rule.requiredAttributes();
@@ -605,11 +584,12 @@ public class DeniedInteractions {
         }
 
         String requiredSkill = rule.requiredSkill();
-        if (requiredSkill.isEmpty()) return;
-        var classdata = player.getData(MyAttachments.PLAYER_CLASS);
-        if (classdata.getPlayerSkills().contains(requiredSkill)) {
-            //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkill, 7);
-            event.setCanceled(true);
+        var classdata = player.getData(ModAttachments.PLAYER_CLASS);
+        if (!requiredSkill.isEmpty()) {
+            if (!classdata.getPlayerSkills().contains(requiredSkill)) {
+                //Network.serverDataAction("Вы не можете использовать это заклинание, так как оно требует навык "+requiredSkills, 7);
+                event.setCanceled(true);
+            }
         }
     }
 
