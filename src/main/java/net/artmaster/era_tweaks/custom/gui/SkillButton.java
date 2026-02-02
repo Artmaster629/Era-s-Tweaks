@@ -1,4 +1,4 @@
-package net.artmaster.era_tweaks.api.gui;
+package net.artmaster.era_tweaks.custom.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class SkillButton extends AbstractWidget {
     private final ResourceLocation texture;
@@ -16,7 +17,8 @@ public class SkillButton extends AbstractWidget {
     private final SkillCondition parents;
     private final String excludingId;
     private final Consumer<SkillButton> onPress;
-    private final List<Component> tooltip;
+    private final Supplier<List<Component>> tooltip;
+    private final Object item;
 
     public SkillButton(int x, int y, int width, int height,
                        ResourceLocation texture,
@@ -24,7 +26,8 @@ public class SkillButton extends AbstractWidget {
                        String id,
                        SkillCondition parents,
                        String excludingId,
-                       List<Component> tooltip,
+                       Supplier<List<Component>> tooltip,
+                       Object item,
                        Consumer<SkillButton> onPress) {
         super(x, y, width, height, message);
         this.texture = texture;
@@ -33,6 +36,7 @@ public class SkillButton extends AbstractWidget {
         this.parents = parents;
         this.excludingId = excludingId;
         this.onPress = onPress;
+        this.item = item;
     }
 
 
@@ -54,7 +58,7 @@ public class SkillButton extends AbstractWidget {
         );
 
         if (mouseX > getX() && mouseX < getX()+getWidth() && mouseY > getY() && mouseY < getY()+getHeight()) {
-            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip.get(), mouseX, mouseY);
         }
 
 
@@ -62,8 +66,9 @@ public class SkillButton extends AbstractWidget {
     }
 
 
+
     public List<Component> getTooltipCustom() {
-        return tooltip;
+        return tooltip.get(); // ВСЕГДА актуальный tooltip
     }
     public String getId() {
         return id;
@@ -73,6 +78,10 @@ public class SkillButton extends AbstractWidget {
     }
     public String getExcludingId() {
         return excludingId;
+    }
+
+    public Object getItem() {
+        return item;
     }
 
     @Override
