@@ -3,22 +3,26 @@ package net.artmaster.era_tweaks;
 
 import com.mojang.logging.LogUtils;
 
-import net.artmaster.era_tweaks.api.container.MyAttachments;
-import net.artmaster.era_tweaks.config.BlockXpConfig;
-import net.artmaster.era_tweaks.config.DeniedConfig;
-import net.artmaster.era_tweaks.config.HarvestXpConfig;
-import net.artmaster.era_tweaks.config.ItemXpConfig;
+import net.artmaster.era_tweaks.custom.player_classes.wizard.priest.custom.block_entity.TotemBlockEntityRenderer;
+import net.artmaster.era_tweaks.registry.ModAttributes;
+import net.artmaster.era_tweaks.registry.ModAttachments;
+import net.artmaster.era_tweaks.config.*;
+import net.artmaster.era_tweaks.registry.ModBlockEntities;
+import net.artmaster.era_tweaks.registry.ModBlocks;
 import net.artmaster.era_tweaks.utils.ServerScheduler;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.util.thread.SidedThreadGroups;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
-
-import java.util.AbstractMap;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ModMain.MODID)
@@ -34,14 +38,36 @@ public class ModMain {
     public ModMain(IEventBus modEventBus) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-        MyAttachments.register();
+        ModAttributes.ATTRIBUTES.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+        ModAttachments.register();
         BlockXpConfig.load();
         ItemXpConfig.load();
         HarvestXpConfig.load();
         DeniedConfig.load();
+        DeniedByClassConfig.load();
 
+        modEventBus.addListener(this::clientSetup);
     }
 
+
+
+
+    @OnlyIn(Dist.CLIENT)
+    private void clientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            LOGGER.info("registered client totembe");
+            BlockEntityRenderers.register(
+                    ModBlockEntities.TOTEM_BE.get(),
+                    TotemBlockEntityRenderer::new
+            );
+            ItemBlockRenderTypes.setRenderLayer(
+                    ModBlocks.TOTEM_BLOCK.get(),
+                    RenderType.cutout()
+            );
+        });
+    }
 
 
 
