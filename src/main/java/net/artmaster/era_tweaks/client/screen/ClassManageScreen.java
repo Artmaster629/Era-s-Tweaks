@@ -1,10 +1,11 @@
 package net.artmaster.era_tweaks.client.screen;
 
-import net.artmaster.era_tweaks.client.Nodes;
-import net.artmaster.era_tweaks.api.container.PlayerSAttrubitesData;
-import net.artmaster.era_tweaks.api.container.MyAttachments;
-import net.artmaster.era_tweaks.api.container.PlayerClassData;
-import net.artmaster.era_tweaks.api.gui.SkillButton;
+import net.artmaster.era_tweaks.registry.ModAttachments;
+import net.artmaster.era_tweaks.custom.data.PlayerClassData;
+import net.artmaster.era_tweaks.custom.data.PlayerSAttrubitesData;
+import net.artmaster.era_tweaks.custom.gui.SkillButton;
+import net.artmaster.era_tweaks.custom.player_classes.SkillChecksManager;
+import net.artmaster.era_tweaks.utils.TooltipUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
@@ -13,8 +14,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 
@@ -53,10 +57,10 @@ public class ClassManageScreen extends Screen {
 
     private double scrollX = 0;
     private double scrollY = 0;
-    private double zoom = 1.0;
+    private double zoom = 0.5;
 
-    private int buttonWidth = 100;
-    private int buttonHeight = 20;
+    private int buttonWidth = 64;
+    private int buttonHeight = 76;
 
     private static final double MIN_ZOOM = 0.5;
     private static final double MAX_ZOOM = 2.5;
@@ -64,6 +68,7 @@ public class ClassManageScreen extends Screen {
 
 
     int page = 1;
+
 
 
     List<SkillButton> nodes;
@@ -78,7 +83,7 @@ public class ClassManageScreen extends Screen {
 
     //Следующая страница
     public void nextPage() {
-        if (page >= 9) return;
+        if (page >= 3) return;
         page+=1;
         rebuildNodes();
     }
@@ -88,6 +93,10 @@ public class ClassManageScreen extends Screen {
         if (page <= 1) return;
         page-=1;
         rebuildNodes();
+    }
+
+    public void refreshTooltips() {
+        this.clearTooltipForNextRenderPass();
     }
 
 
@@ -102,8 +111,8 @@ public class ClassManageScreen extends Screen {
         LocalPlayer player = minecraft.player;
         if (player == null) return;
 
-        data = player.getData(MyAttachments.PLAYER_CLASS);
-        sAttrubitesData = player.getData(MyAttachments.PLAYER_SKILLS);
+        data = player.getData(ModAttachments.PLAYER_CLASS);
+        sAttrubitesData = player.getData(ModAttachments.PLAYER_SKILLS);
 
         this.addRenderableWidget(
                 Button.builder(
@@ -132,22 +141,22 @@ public class ClassManageScreen extends Screen {
                         .build()
         );
 
-        nodes = Nodes.getNodes(page, BUTTON_TEXTURE, this.minecraft.player, data, sAttrubitesData, buttonWidth, buttonHeight);
+        nodes = SkillChecksManager.getNodes(page, BUTTON_TEXTURE, this.minecraft.player, data, sAttrubitesData, buttonWidth, buttonHeight);
 
 
     }
 
     private void rebuildNodes() {
-        nodes = Nodes.getNodes(page, BUTTON_TEXTURE, minecraft.player, data, sAttrubitesData, buttonWidth, buttonHeight);
+        this.clearTooltipForNextRenderPass();
+        nodes = SkillChecksManager.getNodes(page, BUTTON_TEXTURE, minecraft.player, data, sAttrubitesData, buttonWidth, buttonHeight);
     }
+
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         assert this.data != null;
         assert this.minecraft != null;
         assert this.minecraft.player != null;
-        //data = this.minecraft.player.getData(MyAttachments.PLAYER_CLASS);
-        //sAttrubitesData = this.minecraft.player.getData(MyAttachments.PLAYER_SKILLS);
 
 
         assert nodes != null;
@@ -176,33 +185,24 @@ public class ClassManageScreen extends Screen {
             renderable.render(g, mouseX, mouseY, partialTick);
         }
 
-
-
         int clipX = 20;
         int clipY = 65;
         int clipW = this.width-20;  //this.width/2+300;
         int clipH = this.height-20;  //this.height/2+155;
 
-
-
-
-
         g.pose().pushPose();
-
-// переносим базовую систему внутрь окна
+        // перенос базовой системы внутрь окна
         g.pose().translate(clipX, clipY, 0);
-
-// клип
+        // клип
         g.enableScissor(clipX, clipY, clipW, clipH);
 
-// центрируем world в области
+        // центрировать
         g.pose().translate(clipW/2f + scrollX, clipH/2f + scrollY, 0);
         g.pose().scale((float)zoom, (float)zoom, 1f);
 
-
         double realX = (float)((mouseX - clipX - (clipW/2f) - scrollX) / zoom);
         double realY = (float)((mouseY - clipY - (clipH/2f) - scrollY) / zoom);
-// рисуем узлы
+        //линии
         for (SkillButton node : nodes) {
             for (SkillButton parent : nodes) {
                 if (node.getParents().skills().contains(parent.getId())) {
@@ -228,43 +228,25 @@ public class ClassManageScreen extends Screen {
         g.disableScissor();
         g.pose().popPose();
 
-
-
-
         for(SkillButton n : nodes){
             if(hit(n, realX, realY)){
                 g.renderComponentTooltip(font, n.getTooltipCustom(), mouseX, mouseY);
             }
         }
 
-
-
         float scale = 2.0f;
-
         int centerX = this.width / 2;
-
         float drawX = centerX / scale;
 
         g.pose().pushPose();
         g.pose().scale(scale, scale, 1.0f);
-
-
-
         g.drawCenteredString(
                 this.font,
-                Nodes.getTitleClass(page),
-                (int) drawX - 50,
+                SkillChecksManager.getTitleClass(page),
+                (int) 40,
                 5,
                 0xFFFFFF
         );
-        g.drawCenteredString(
-                this.font,
-                Nodes.getTitleSubClass(page),
-                (int) drawX + 50,
-                5,
-                0xFFFFFF
-        );
-
         g.drawCenteredString(
                 this.font,
                 String.valueOf(data.getUpgradesPoints()),
@@ -272,24 +254,26 @@ public class ClassManageScreen extends Screen {
                 7,
                 0xFFFFFF
         );
-
+        g.drawString(this.font, "?", 10, 12, 0xFFFFFF);
         g.pose().popPose();
+        if (mouseX >= 10 && mouseX <= 52 && mouseY >= 12 && mouseY <= 52) {
+            g.renderComponentTooltip(this.font, TooltipUtil.splitTooltip("tooltip.era_tweaks.beta_guide"), mouseX, mouseY);
+        }
 
         g.drawCenteredString(
                 this.font,
-                String.valueOf(data.getUpgradesPointsProgress()+"/5"),
+                String.valueOf((double) Math.round(data.getUpgradesPointsProgress()*100)/100+"/5"),
                 centerX,
                 40,
                 0xFFFFFF
         );
-
-
     }
 
     private void drawLine(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
         int dx = Math.abs(x2 - x1);
         int dy = Math.abs(y2 - y1);
         int steps = Math.max(dx, dy);
+        if (steps <= 0) steps = 1;
 
         for (int i = 0; i <= steps; i++) {
             int x = x1 + i * (x2 - x1) / steps;
@@ -299,21 +283,10 @@ public class ClassManageScreen extends Screen {
     }
 
     private void drawNode(GuiGraphics g, SkillButton node){
-
         int x = node.getX() - buttonWidth/2;
         int y = node.getY() - buttonHeight/2;
 
-
-
         ResourceLocation finalTexture = BUTTON_TEXTURE;
-
-
-
-        if (data.getPlayerSkills().contains(node.getId())) {
-            finalTexture = BUTTON_ACCEPTED_TEXTURE;
-        }
-
-
 
         if (node.getParents().isRequiredAll()) {
             for (String p : node.getParents().skills()) {
@@ -330,48 +303,78 @@ public class ClassManageScreen extends Screen {
             }
 
         }
+        if (data.getPlayerSkills().contains(node.getExcludingId())) {finalTexture = BUTTON_DENIED_TEXTURE;}
+        if (data.getPlayerSkills().contains(node.getId())) {finalTexture = BUTTON_ACCEPTED_TEXTURE;}
+        g.blit(finalTexture, x, y, 0, 0, buttonWidth, buttonHeight, buttonWidth, buttonHeight);
+        if (node.getItem() instanceof Item item) {
+            float scale = 2.2f;
+            float drawX = x / scale;
+            float drawY = y / scale;
 
-
-
-        if (data.getPlayerSkills().contains(node.getExcludingId())) {
-            finalTexture = BUTTON_DENIED_TEXTURE;
+            g.pose().pushPose();
+            g.pose().scale(scale, scale, 1.0f);
+            g.renderItem(new ItemStack(item), (int)drawX+6, (int)drawY+1);
+            g.pose().popPose();
         }
 
+        else if (node.getItem() instanceof DeferredHolder deferredHolder && deferredHolder.get() instanceof Item item) {
+
+            float scale = 2.2f;
+            float drawX = x / scale;
+            float drawY = y / scale;
+
+            g.pose().pushPose();
+            g.pose().scale(scale, scale, 1.0f);
+            g.renderItem(new ItemStack(item), (int)drawX+6, (int)drawY+1);
+            g.pose().popPose();
+        }
+
+        float scale = 0.75f;
+        float drawX = x / scale;
+        float drawY = y / scale;
+
+        g.pose().pushPose();
+        g.pose().scale(scale, scale, 1.0f);
+        List<Component> textFull = TooltipUtil.splitTooltip(node.getMessage().getString());
+        for (int i=0; i<textFull.size(); i++) {
+            g.drawCenteredString(font, textFull.get(i), (int) drawX+42, (int) drawY+75+(i*8), 0xFFFFFFFF);
+        }
+
+        g.pose().popPose();
 
 
 
-
-
-
-
-
-        //g.fill(x, y, x + size, y + size, 0xFF444444);
-        g.blit(finalTexture, x, y, 0, 0, buttonWidth, buttonHeight, buttonWidth, buttonHeight);
-
-
-
-        g.drawString(font, node.getMessage(), x+5, y+10, 0xFFFFFFFF);
     }
 
 
-    // DRAG TO SCROLL
+
+    //DRAG TO SCROLL
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
+        boolean returning = true;
 
-//        if(mouseX < 10 || mouseX > 500 || mouseY < 50 || mouseY > 600){
-//            return false;
-//        }
-
-
-        //scrollX = Mth.clamp(scrollX + dx, -200, 200);
-        //scrollY = Mth.clamp(scrollY + dy, -200, 200);
-//        if (mouseX < clipX1 || mouseX > clipX2 || mouseY < clipY1 || mouseY > clipY2) {
-//            return false;
-//        }
-
+        int clipW = globalClipW;
+        int clipH = globalClipH;
+        int clipX = globalClipX;
+        int clipY = globalClipY;
         this.scrollX += dx;
         this.scrollY += dy;
-        return true;
+        //System.out.println("X: "+dx+", Y:"+dy);
+        for (SkillButton skill : nodes) {
+            if (skill.getId().equals("common_warrior_skill_2")) {
+                double screenX =
+                        clipX + clipW / 2.0 + (skill.getX() + scrollX) * zoom;
+
+                double screenY =
+                        clipY + clipH / 2.0 + (skill.getY() + scrollY) * zoom;
+                //System.out.println(skill.getId()+"X: "+screenX+", Y:"+screenY);
+                if (screenX < 50 || screenY < 64) {
+                    returning = false;
+                }
+
+            }
+        }
+        return returning;
     }
 
     // MOUSE WHEEL = ZOOM
@@ -406,6 +409,33 @@ public class ClassManageScreen extends Screen {
 
     private void onNodeClick(SkillButton n, double mouseX, double mouseY){
         //System.out.println("Clicked " + n.getMessage());
+        if (data.getPlayerSkills().contains(n.getId())) {
+            System.out.println("accepted");
+            return;
+        }
+        if (data.getUpgradesPoints() < 1) {
+            System.out.println("not enough upgrades points");
+            return;
+        }
+        if (data.getPlayerSkills().contains(n.getExcludingId()) && !n.getExcludingId().equals("none")) {
+            System.out.println("excluding");
+            return;
+        }
+        for (String skill : n.getParents().skills()) {
+            if (n.getParents().isRequiredAll()) {
+                if (!data.getPlayerSkills().contains(skill)) {
+                    System.out.println("not all");
+                    return;
+                }
+            }
+            else {
+                if (!data.getPlayerSkills().contains(n.getParents().skills().getFirst()) && !data.getPlayerSkills().contains(n.getParents().skills().getLast())) {
+                    System.out.println("not any");
+                    return;
+                }
+            }
+
+        } //Родительский
         n.onClick(mouseX, mouseY);
     }
 
