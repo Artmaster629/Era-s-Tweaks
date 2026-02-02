@@ -1,9 +1,9 @@
 package net.artmaster.era_tweaks.client.screen;
 
-import net.artmaster.era_tweaks.api.container.MyAttachments;
-import net.artmaster.era_tweaks.api.container.PlayerClassData;
-import net.artmaster.era_tweaks.api.container.PlayerSAttrubitesData;
-import net.artmaster.era_tweaks.api.gui.ImageButton;
+import net.artmaster.era_tweaks.registry.ModAttachments;
+import net.artmaster.era_tweaks.custom.data.PlayerClassData;
+import net.artmaster.era_tweaks.custom.data.PlayerSAttrubitesData;
+import net.artmaster.era_tweaks.custom.gui.ImageButton;
 import net.artmaster.era_tweaks.network.Network;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -65,99 +65,42 @@ public class ClassSelectScreen extends Screen {
     private void createButtons() {
         if (classdata.getPlayerClass().equals("unknown")) {
             this.addRenderableWidget(new ImageButton(
-                    ((this.width - 40)/2) - 150, ((this.height - 125)/2), 40, 125,
+                    ((this.width - 40) / 2) - 150, ((this.height - 125) / 2), 40, 125,
                     BUTTON_WARRIOR_TEXTURE,
                     Component.translatable("text.era_tweaks.warrior_class"),
                     "warrior_select_class",
                     List.of(Component.translatable("tooltip.era_tweaks.warrior_desc")),
                     btn -> {
-                        Network.serverDataAction("warrior", 2);
-                        refresh();
-                        refresh();
+                        Network.toServerAction("warrior", 2);
+                        Network.toServerAction("", 4);
+                        //refresh();
+                        //refresh();
                     }
             ));
             this.addRenderableWidget(new ImageButton(
-                    ((this.width - 40)/2), ((this.height - 125)/2), 40, 125,
+                    ((this.width - 40) / 2), ((this.height - 125) / 2), 40, 125,
                     BUTTON_WIZARD_TEXTURE,
                     Component.translatable("text.era_tweaks.wizard_class"),
                     "wizard_select_class",
                     List.of(Component.translatable("tooltip.era_tweaks.wizard_desc")),
                     btn -> {
-                        Network.serverDataAction("wizard", 2);
-                        refresh();
-                        refresh();
+                        Network.toServerAction("wizard", 2);
+                        Network.toServerAction("", 4);
+                        //refresh();
+                        //refresh();
                     }
             ));
             this.addRenderableWidget(new ImageButton(
-                    ((this.width - 40)/2) + 150, ((this.height - 125)/2), 40, 125,
+                    ((this.width - 40) / 2) + 150, ((this.height - 125) / 2), 40, 125,
                     BUTTON_ASSISTANT_TEXTURE,
                     Component.translatable("text.era_tweaks.assistant_class"),
                     "assistant_select_class",
                     List.of(Component.translatable("tooltip.era_tweaks.assistant_desc")),
                     btn -> {
-                        Network.serverDataAction("assistant", 2);
-                        refresh();
-                        refresh();
-                    }
-            ));
-        } else {
-            String subclass1 = "unknown_subclass";
-            String subclass2 = "unknown_subclass";
-            String subclass3 = "unknown_subclass";
-            if (classdata.getPlayerClass().equals("assistant")) {
-                subclass1 = "commissar";
-                subclass2 = "alchemist";
-                subclass3 = "smith";
-            }
-            if (classdata.getPlayerClass().equals("wizard")) {
-                subclass1 = "druid";
-                subclass2 = "priest";
-                subclass3 = "necromancer";
-            }
-            if (classdata.getPlayerClass().equals("warrior")) {
-                subclass1 = "paladin";
-                subclass2 = "bowman";
-                subclass3 = "scout";
-            }
-
-            final String subclass_left = subclass1;
-            final String subclass_center = subclass2;
-            final String subclass_right = subclass3;
-
-            this.addRenderableWidget(new ImageButton(
-                    ((this.width - 40)/2) - 150, ((this.height - 125)/2), 40, 125,
-                    BUTTON_WARRIOR_TEXTURE,
-                    Component.translatable("text.era_tweaks."+subclass_left+"_subclass"),
-                    subclass_left+"_select_subclass",
-                    List.of(Component.translatable("tooltip.era_tweaks."+subclass_left+"_desc")),
-                    btn -> {
-                        
-                        Network.serverDataAction(subclass_left, 3);
-                        Network.serverDataAction("", 4);
-                    }
-            ));
-            this.addRenderableWidget(new ImageButton(
-                    ((this.width - 40)/2), ((this.height - 125)/2), 40, 125,
-                    BUTTON_WIZARD_TEXTURE,
-                    Component.translatable("text.era_tweaks."+subclass_center+"_subclass"),
-                    subclass_center+"_select_subclass",
-                    List.of(Component.translatable("tooltip.era_tweaks."+subclass_center+"_desc")),
-                    btn -> {
-                        Network.serverDataAction(subclass_center, 3);
-                        Network.serverDataAction("", 4);
-                    }
-
-
-            ));
-            this.addRenderableWidget(new ImageButton(
-                    ((this.width - 40)/2) + 150, ((this.height - 125)/2), 40, 125,
-                    BUTTON_ASSISTANT_TEXTURE,
-                    Component.translatable("text.era_tweaks."+subclass_right+"_subclass"),
-                    subclass_right+"_select_subclass",
-                    List.of(Component.translatable("tooltip.era_tweaks."+subclass_right+"_desc")),
-                    btn -> {
-                        Network.serverDataAction(subclass_right, 3);
-                        Network.serverDataAction("", 4);
+                        Network.toServerAction("assistant", 2);
+                        Network.toServerAction("", 4);
+                        //refresh();
+                        //refresh();
                     }
             ));
         }
@@ -170,12 +113,12 @@ public class ClassSelectScreen extends Screen {
         assert this.minecraft.player != null;
         assert data != null;
 
-        classdata = minecraft.player.getData(MyAttachments.PLAYER_CLASS);
-        data = minecraft.player.getData(MyAttachments.PLAYER_SKILLS);
+        classdata = minecraft.player.getData(ModAttachments.PLAYER_CLASS);
+        data = minecraft.player.getData(ModAttachments.PLAYER_SKILLS);
         className = classdata.getPlayerClass();
 
-        if (!classdata.getPlayerSubClass().equals("unknown")) {
-            Network.serverDataAction("", 4);
+        if (!classdata.getPlayerClass().equals("unknown")) {
+            Network.toServerAction("", 4);
             return;
         }
 
@@ -216,7 +159,7 @@ public class ClassSelectScreen extends Screen {
 //            }
 //            if (classdata.getPlayerClass().equals("warrior")) {
 //                subclass1 = "paladin";
-//                subclass2 = "bowman";
+//                subclass2 = "alchemist";
 //                subclass3 = "scout";
 //            }
 //
@@ -254,14 +197,6 @@ public class ClassSelectScreen extends Screen {
             guiGraphics.drawCenteredString(
                     this.font,
                     Component.translatable("title.era_tweaks.select_class"),
-                    (int) drawX,
-                    10,
-                    0xFFFFFF
-            );
-        } else {
-            guiGraphics.drawCenteredString(
-                    this.font,
-                    Component.translatable("title.era_tweaks.select_subclass"),
                     (int) drawX,
                     10,
                     0xFFFFFF
