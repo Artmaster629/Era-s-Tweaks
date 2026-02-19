@@ -1,4 +1,4 @@
-package net.artmaster.era_tweaks.custom.player_classes.warrior.bowman;
+package net.artmaster.era_tweaks.custom.nodes.player_classes.warrior.bowman;
 
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.artmaster.era_tweaks.custom.data.PlayerClassData;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.Items;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.artmaster.era_tweaks.custom.player_classes.SkillChecksManager.isCompR;
+import static net.artmaster.era_tweaks.custom.nodes.SkillChecksManager.isCompR;
 
 
 //МЕЖДУ ВЗАИМОИСКЛЮЧАЮЩИМИ - 60 разницы
@@ -75,7 +75,7 @@ public class BowmanSkills {
                     }
                     if (data.getPlayerSkills().size() < 3) {return;}
                     Network.toServerAction("bowman_skill_1", 1);
-                    Network.toServerAction("alchemist", 3);
+                    Network.toServerAction("bowman", 3);
                 }
         ));
 
