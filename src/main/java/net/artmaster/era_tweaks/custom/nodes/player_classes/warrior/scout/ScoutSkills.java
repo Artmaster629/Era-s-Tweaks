@@ -1,4 +1,4 @@
-package net.artmaster.era_tweaks.custom.player_classes.warrior.scout;
+package net.artmaster.era_tweaks.custom.nodes.player_classes.warrior.scout;
 
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.artmaster.era_tweaks.custom.data.PlayerClassData;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.Items;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.artmaster.era_tweaks.custom.player_classes.SkillChecksManager.isCompR;
+import static net.artmaster.era_tweaks.custom.nodes.SkillChecksManager.isCompR;
 
 
 //МЕЖДУ ВЗАИМОИСКЛЮЧАЮЩИМИ - 60 разницы
@@ -101,12 +101,12 @@ public class ScoutSkills {
                                 .append(Component.translatable("text.era_tweaks.subclass"))
                                 .append(Component.literal(": "))
                                 .append(Component.translatable("text.era_tweaks.scout_subclass"))
-                                .withStyle(data.getPlayerSubClass().equals("scout") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                                .withStyle(data.getPlayerSubClass().equals("commissar") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 ),
                 ItemRegistry.HELLRAZOR,
 
                 btn -> {
-                    if (!data.getPlayerSubClass().equals("scout")) return; // Проверка на подкласс
+                    if (!data.getPlayerSubClass().equals("commissar")) return; // Проверка на подкласс
                     if (!isCompR(10, "body", sAttributesData)) return; //Проверка на атрибут
                     Network.toServerAction("scout_skill_2_1", 1);
                 }
@@ -138,11 +138,11 @@ public class ScoutSkills {
                                 .append(Component.translatable("text.era_tweaks.subclass"))
                                 .append(Component.literal(": "))
                                 .append(Component.translatable("text.era_tweaks.scout_subclass"))
-                                .withStyle(data.getPlayerSubClass().equals("scout") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                                .withStyle(data.getPlayerSubClass().equals("commissar") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 ),
                 ItemRegistry.WEAPON_PARTS,
                 btn -> {
-                    if (!data.getPlayerSubClass().equals("scout")) return; // Проверка на подкласс
+                    if (!data.getPlayerSubClass().equals("commissar")) return; // Проверка на подкласс
                     if (!isCompR(5, "intellect", sAttributesData)) return; //Проверка на атрибут
                     if (!isCompR(7, "body", sAttributesData)) return; //Проверка на атрибут
                     Network.toServerAction("scout_skill_2_2", 1);
@@ -175,11 +175,11 @@ public class ScoutSkills {
                                 .append(Component.translatable("text.era_tweaks.subclass"))
                                 .append(Component.literal(": "))
                                 .append(Component.translatable("text.era_tweaks.scout_subclass"))
-                                .withStyle(data.getPlayerSubClass().equals("scout") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                                .withStyle(data.getPlayerSubClass().equals("commissar") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 ),
                 ItemRegistry.NATURE_UPGRADE_ORB,
                 btn -> {
-                    if (!data.getPlayerSubClass().equals("scout")) return; // Проверка на подкласс
+                    if (!data.getPlayerSubClass().equals("commissar")) return; // Проверка на подкласс
                     if (!isCompR(7, "intellect", sAttributesData)) return; //Проверка на атрибут
                     if (!isCompR(15, "body", sAttributesData)) return; //Проверка на атрибут
                     Network.toServerAction("scout_skill_3", 1);
@@ -207,11 +207,11 @@ public class ScoutSkills {
                                 .append(Component.translatable("text.era_tweaks.subclass"))
                                 .append(Component.literal(": "))
                                 .append(Component.translatable("text.era_tweaks.scout_subclass"))
-                                .withStyle(data.getPlayerSubClass().equals("scout") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                                .withStyle(data.getPlayerSubClass().equals("commissar") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 ),
                 ItemRegistry.PLAGUED_BOOTS,
                 btn -> {
-                    if (!data.getPlayerSubClass().equals("scout")) return; // Проверка на подкласс
+                    if (!data.getPlayerSubClass().equals("commissar")) return; // Проверка на подкласс
                     if (!isCompR(20, "intellect", sAttributesData)) return; //Проверка на атрибут
                     Network.toServerAction("scout_skill_4", 1);
                 }
@@ -243,11 +243,11 @@ public class ScoutSkills {
                                 .append(Component.translatable("text.era_tweaks.subclass"))
                                 .append(Component.literal(": "))
                                 .append(Component.translatable("text.era_tweaks.scout_subclass"))
-                                .withStyle(data.getPlayerSubClass().equals("scout") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                                .withStyle(data.getPlayerSubClass().equals("commissar") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 ),
                 Items.NETHER_STAR,
                 btn -> {
-                    if (!data.getPlayerSubClass().equals("scout")) return; // Проверка на подкласс
+                    if (!data.getPlayerSubClass().equals("commissar")) return; // Проверка на подкласс
                     if (!isCompR(40, "body", sAttributesData)) return; //Проверка на атрибут
                     if (!isCompR(10, "intellect", sAttributesData)) return; //Проверка на атрибут
                     Network.toServerAction("scout_skill_5_1", 1);
@@ -280,11 +280,11 @@ public class ScoutSkills {
                                 .append(Component.translatable("text.era_tweaks.subclass"))
                                 .append(Component.literal(": "))
                                 .append(Component.translatable("text.era_tweaks.scout_subclass"))
-                                .withStyle(data.getPlayerSubClass().equals("scout") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                                .withStyle(data.getPlayerSubClass().equals("commissar") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 ),
                 Items.END_CRYSTAL,
                 btn -> {
-                    if (!data.getPlayerSubClass().equals("scout")) return; // Проверка на подкласс
+                    if (!data.getPlayerSubClass().equals("commissar")) return; // Проверка на подкласс
                     if (!isCompR(25, "intellect", sAttributesData)) return; //Проверка на атрибут
                     if (!isCompR(25, "body", sAttributesData)) return; //Проверка на атрибут
                     Network.toServerAction("scout_skill_5_2", 1);
